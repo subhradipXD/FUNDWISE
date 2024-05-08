@@ -1,0 +1,50 @@
+/*------------ Login container ------------*/
+
+.boxArea {
+    width: 930px;
+}
+
+/*------------ Right box ------------*/
+
+.rightBox {
+    padding: 40px 30px 40px 40px;
+}
+
+/*------------ Custom Placeholder ------------*/
+
+::placeholder {
+    font-size: 16px;
+}
+
+.rounded4 {
+    border-radius: 20px;
+}
+
+.rounded5 {
+    border-radius: 30px;
+}
+
+.btnLogin {
+    width: 100%;
+}
+
+
+/*------------ For small screens------------*/
+
+@media only screen and (max-width: 768px) {
+
+    .boxArea {
+        margin: 0 10px;
+
+    }
+
+    .leftBox {
+        height: 100px;
+        overflow: hidden;
+    }
+
+    .rightBox {
+        padding: 20px;
+    }
+
+}
