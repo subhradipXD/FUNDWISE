@@ -2,7 +2,6 @@ import { BiUser } from "react-icons/bi";
 import { BiPhone } from "react-icons/bi";
 import { BiInfoCircle } from "react-icons/bi";
 import { FaPeopleRobbery } from "react-icons/fa6";
-import "./profile.css";
 import Footer from "../../inc/Footer";
 import LoggedInMenu from "../../inc/LoggedInMenu";
 import user from "../../assets/navImg/user.png";
@@ -10,6 +9,11 @@ import user from "../../assets/navImg/user.png";
 import { CiHeart } from "react-icons/ci";
 import { FaRegCommentDots } from "react-icons/fa";
 import { MdHandshake } from "react-icons/md";
+import { MdAlternateEmail } from "react-icons/md";
+
+import Swal from "sweetalert2";
+import { useCookies } from "react-cookie";
+import { useNavigate } from "react-router-dom";
 
 import { useRef, useEffect, useState } from "react";
 import ClipboardJS from "clipboard";
@@ -18,6 +22,12 @@ import axios from "axios";
 function UserProfile() {
   const baseURL = "http://localhost:2000";
   const [posts, setPosts] = useState([]);
+
+  const navigate = useNavigate();
+  const [cookies, setCookies] = useCookies(["token"]);
+  if (!cookies.token) {
+    navigate("/");
+  }
 
   const usernameRef = useRef(null);
 
@@ -66,6 +76,22 @@ function UserProfile() {
     }
   };
 
+  const [imagePreview, setImagePreview] = useState("");
+
+  // Function to handle file input change and update image preview
+  const handleImageChange = (event) => {
+    const file = event.target.files[0];
+    const reader = new FileReader();
+
+    reader.onloadend = () => {
+      setImagePreview(reader.result);
+    };
+
+    if (file) {
+      reader.readAsDataURL(file);
+    }
+  };
+
   return (
     <>
       <LoggedInMenu />
@@ -76,7 +102,7 @@ function UserProfile() {
               <img
                 src={user}
                 width={200}
-                alt="User Image"
+                alt="User"
                 className="img-fluid rounded-circle mb-3 shadow mb-md-0 bg-body-tertiary rounded"
               />
             </div>
@@ -94,6 +120,11 @@ function UserProfile() {
                   Copy Username
                 </button>
               </div>
+
+              <p>
+                <MdAlternateEmail /> {/* React Icon for phone */}
+                Email ID: <span>abc@gmail.com</span>
+              </p>
               <p>
                 <BiPhone /> {/* React Icon for phone */}
                 Phone Number: <span>123-456-7890</span>
@@ -141,7 +172,7 @@ function UserProfile() {
                         <img
                           src={`${baseURL}/post-images/${post.image}`}
                           className="img-fluid"
-                          alt="Post Image"
+                          alt="Post"
                         />
                       </div>
                     )}
@@ -172,7 +203,7 @@ function UserProfile() {
       <div
         className="modal fade custom-modal"
         id="exampleModal"
-        tabIndex={-1}
+        tabIndex="-1"
         aria-labelledby="exampleModalLabel"
         aria-hidden="true"
       >
@@ -201,8 +232,29 @@ function UserProfile() {
                   className="form-control custom-input"
                   type="file"
                   id="formFile"
+                  onChange={handleImageChange}
                 />
               </div>
+              {imagePreview ? (
+                <div className="mb-3 d-flex justify-content-center align-items-center">
+                  <img
+                    width={150}
+                    className="img-fluid rounded-circle mb-3 shadow mb-md-0 bg-body-tertiary rounded custom-image-preview"
+                    src={imagePreview}
+                    alt="Preview"
+                  />
+                </div>
+              ) : (
+                <div className="mb-3 d-flex justify-content-center align-items-center">
+                  <img
+                    width={150}
+                    className="img-fluid rounded-circle mb-3 shadow mb-md-0 bg-body-tertiary rounded custom-image-preview"
+                    src={user}
+                    alt="User"
+                  />
+                </div>
+              )}
+
               <div>
                 <div className="mb-3">
                   <label
@@ -218,7 +270,49 @@ function UserProfile() {
                     placeholder="name@example.com"
                   />
                 </div>
-                {/* <!-- Add similar custom styling for other input fields --> */}
+                <div className="mb-3">
+                  <label
+                    htmlFor="exampleFormControlInput1"
+                    className="form-label custom-label"
+                  >
+                    Phone number
+                  </label>
+                  <input
+                    type="number"
+                    className="form-control custom-input"
+                    id="exampleFormControlInput1"
+                    placeholder="Phone number"
+                  />
+                </div>
+                <div className="mb-3">
+                  <label
+                    htmlFor="exampleFormControlInput1"
+                    className="form-label custom-label"
+                  >
+                    Name
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control custom-input"
+                    id="exampleFormControlInput1"
+                    placeholder="First Name"
+                  />
+                </div>
+
+                <div className="mb-3">
+                  <label
+                    htmlFor="exampleFormControlInput1"
+                    className="form-label custom-label"
+                  >
+                    Username
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control custom-input"
+                    id="exampleFormControlInput1"
+                    placeholder="Username"
+                  />
+                </div>
               </div>
             </div>
             <div className="modal-footer custom-modal-footer">

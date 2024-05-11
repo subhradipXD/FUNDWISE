@@ -58,7 +58,28 @@ console.log(user);
   });
 };
 
+
+// export const editUser = async (req, res) => {
+//   try {
+//     const user_id = req.params.userID;
+//     const { name, email } = req.body;
+//     const User = await UserModel.findByIdAndUpdate(
+//       user_id,
+//       { name, email },
+//       { new: true }
+//     );
+//     if (!User) {
+//       return res.status(400).json({ message: "User not found" });
+//     }
+//     return res.status(200).json(User);
+//   } catch (e) {
+//     res.sendStatus(400).send(e);
+//   }
+// };
+
+
 module.exports = {
   Register,
   Login,
+  // editUser,
 };
