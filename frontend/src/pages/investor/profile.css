@@ -1,0 +1,76 @@
+/* Custom styles for edit profile modal */
+
+.custom-modal {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .custom-modal-dialog {
+    max-width: 600px;
+  }
+  
+  .custom-modal-content {
+    border-radius: 10px;
+  }
+  
+  .custom-modal-header {
+    padding: 20px;
+    border-bottom: 1px solid #dee2e6;
+    background-color: #f8f9fa;
+    border-radius: 10px 10px 0 0;
+  }
+  
+  .custom-modal-title {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #343a40;
+  }
+  
+  .custom-btn-close {
+    border: none;
+    background: none;
+    color: #6c757d;
+    font-size: 1.5rem;
+  }
+  
+  .custom-modal-body {
+    padding: 20px;
+  }
+  
+  .custom-label {
+    font-weight: bold;
+  }
+  
+  .custom-input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+  }
+  
+  .custom-modal-footer {
+    padding: 20px;
+    border-top: 1px solid #dee2e6;
+    background-color: #f8f9fa;
+    border-radius: 0 0 10px 10px;
+  }
+  
+  .custom-btn-secondary,
+  .custom-btn-primary {
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .custom-btn-secondary {
+    background-color: #6c757d;
+    color: #fff;
+  }
+  
+  .custom-btn-primary {
+    background-color: #007bff;
+    color: #fff;
+  }
+  

@@ -7,6 +7,7 @@ import { IoSearchOutline } from "react-icons/io5";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import "./feed.css";
 import { useCookies } from "react-cookie";
 import axios from "axios";
 
@@ -19,7 +20,6 @@ function Feed() {
   const [posts, setPosts] = useState([]);
   const navigate = useNavigate();
   const [cookies, setCookies] = useCookies(["token"]);
-  // console.log(cookies.token)
 
   if (!cookies.token) {
     navigate("/");
@@ -63,8 +63,10 @@ function Feed() {
   const getPosts = async () => {
     try {
       const res = await axios.get(`${baseURL}/post/`);
-      console.log(res.data);
-      setPosts(res.data);
+      const sortedPosts = res.data.sort(
+        (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
+      );
+      setPosts(sortedPosts.reverse());
     } catch (err) {
       console.log(err);
     }
@@ -159,7 +161,6 @@ function Feed() {
             <div className="col-md-8">
               <ul className="list-unstyled">
                 {posts
-                  .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
                   .map((post) => (
                     <li
                       key={post._id}
@@ -167,18 +168,19 @@ function Feed() {
                     >
                       <div className="card-body">
                         <h5 className="card-title">{post.title}</h5>
-                        <p className="card-text text-muted">
+                        <p className="card-text text-muted mt-2">
                           {post.description}
                         </p>
                         {post.image && (
-                          <img
-                            src={`${baseURL}/post-images/${post.image}`}
-                            height={"500"}
-                            width={"500"}
-                          />
+                          <div className="img-container mt-3">
+                            <img
+                              src={`${baseURL}/post-images/${post.image}`}
+                              width={"500"}
+                            />
+                          </div>
                         )}
 
-                        <div className="d-flex justify-content-between">
+                        <div className="d-flex justify-content-between mt-5">
                           <button
                             className="btn btn-outline-danger"
                             style={{ fontSize: "15px" }}
@@ -269,24 +271,13 @@ function Feed() {
                         type="file"
                         className="form-control"
                         id="formFileMultiple"
-                        // multiple
+                        multiple
                         accept=".jpeg, .jpg, .png, .webp"
                         onChange={(e) => {
                           // setImagePreview(URL.createObjectURL(e.target.files[0]));
                           setPostImage(e.target.files[0]);
                         }}
                       />
-
-                      {/* <input
-          type="file"
-          id="postImagePicker"
-          className="hidden"
-          accept=".jpeg, .jpg, .png, .webp"
-          onChange={(e) => {
-            setImagePreview(URL.createObjectURL(e.target.files[0]));
-            setPostImage(e.target.files[0]);
-          }}
-        /> */}
                     </div>
                     <div className="mb-3">
                       <button

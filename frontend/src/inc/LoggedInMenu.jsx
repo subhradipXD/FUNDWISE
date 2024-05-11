@@ -1,24 +1,45 @@
 import CustomCSS from "../custom.module.css";
+import chat from "../assets/navImg/chat.png";
+import notification from "../assets/navImg/notification-bell.png";
 import mode from "../assets/day-and-night.png";
 import light from "../assets/day-mode.png";
 import dark from "../assets/night-mode.png";
 import auto from "../assets/theme.png";
-import { IoSearchOutline } from "react-icons/io5";
 import profile from "../assets/navImg/user.png";
 import home from "../assets/navImg/home-button.png";
-import lgot from "../assets/navImg/turn-off.png";
+import logOut from "../assets/navImg/turn-off.png";
 import { NavLink, useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { useCookies } from "react-cookie";
-import { MdOutlineDashboardCustomize } from "react-icons/md";
 
 function LoggedInMenu() {
   const navigate = useNavigate();
-  const [cookies,setCookies, removeCookie] = useCookies(["token"]);
-  const handleLogout = ()=>{
+  const [cookies, setCookies, removeCookie] = useCookies(["token"]);
+  const handleLogout = () => {
     removeCookie("token");
-    navigate("/investorLogin");
-  }
+    navigate("/");
+  };
+  const handleFeed = () => {
+    if ("token") {
+      navigate("/feed");
+    }
+  };
+  const handleProfile = () => {
+    if ("token") {
+      navigate("/profile");
+    }
+  };
+  const handleMessage = () => {
+    if ("token") {
+      navigate("/message");
+    }
+  };
+  const handleNotification = () => {
+    if ("token") {
+      navigate("/notification");
+    }
+  };
+
   return (
     <>
       <nav className="navbar navbar-expand-lg sticky-top bg-body-tertiary">
@@ -39,18 +60,6 @@ function LoggedInMenu() {
             <span className="navbar-toggler-icon"></span>
           </button>
           <div className="collapse navbar-collapse" id="navbarTogglerDemo02">
-            <form className="d-flex" role="search">
-              <input
-                className="form-control me-2"
-                type="search"
-                placeholder="Search"
-                aria-label="Search"
-              />
-              <button className="btn btn-outline-primary" type="submit">
-              <IoSearchOutline style={{ fontSize: "20px" }} />
-
-              </button>
-            </form>
             <ul className="navbar-nav ms-auto mb-2 mb-lg-0 nav nav-underline">
               <li className="nav-item dropdown">
                 <a
@@ -90,87 +99,68 @@ function LoggedInMenu() {
               </li>
               <li className="nav-item">
                 <a className="nav-link" aria-current="page" href="#">
-                  <Link to="/feed" style={{ textDecoration: "none" }}>
-                    <img src={home} width={19} alt="Home" />
-                  </Link>
-                </a>
-              </li>
-              {/* <li className="nav-item">
-                <a className="nav-link" href="#">
-                  <Link to="/message" style={{ textDecoration: "none" }}>
-                    <img src={chat} width={19} alt="Messages" />
-                  </Link>
+                  {/* <Link to="/feed" style={{ textDecoration: "none" }}> */}
+                    <img
+                      src={home}
+                      width={19}
+                      alt="Home"
+                      onClick={handleFeed}
+                    />
+                  {/* </Link> */}
                 </a>
               </li>
               <li className="nav-item">
                 <a className="nav-link" href="#">
-                  <Link to="/notification" style={{ textDecoration: "none" }}>
-                    <img src={notification} width={19} alt="Notifications" />
-                  </Link>
+                  {/* <Link to="/message" style={{ textDecoration: "none" }}> */}
+                    <img
+                      src={chat}
+                      width={19}
+                      alt="Messages"
+                      onClick={handleMessage}
+                    />
+                  {/* </Link> */}
                 </a>
-              </li> */}
+              </li>
               <li className="nav-item">
                 <a className="nav-link" href="#">
-                  <div className="btn-group dropstart">
-                    <button
-                      type="button"
-                      className="btn btn-info btn-sm dropdown-toggle"
-                      data-bs-toggle="dropdown"
-                      aria-expanded="false"
-                    >
-                      <img src={profile} width={19} alt="Profile" />
-                    </button>
-                    <ul className="dropdown-menu">
-                      <li>
-                        <a className="dropdown-item" href="#">
-                          <Link
-                            to="/profile"
-                            style={{ textDecoration: "none" }}
-                          >
-                            <img src={profile} width={19} alt="Profile" /> My
-                            Profile
-                          </Link>
-                        </a>
-                      </li>
-                      {/* <li>
-                        <a
-                          className="dropdown-item btn btn-primary"
-                          href="#"
-                          data-bs-toggle="modal"
-                          data-bs-target="#staticBackdrop"
-                        >
-                          <img src={post} width={17} alt="Post" />
-                          <span className="mx-1">New Post</span>
-                        </a>
-                      </li> */}
-                      <li>
-                        <a className="dropdown-item" href="#">
-                          <img src={lgot} width={17} alt="Post" />
-                          <span className="mx-1" onClick={handleLogout}>Log Out</span>
-                        </a>
-                      </li>
-                      <li>
-                        <a className="dropdown-item" href="#">
-                          <Link
-                            to="/dashboard"
-                            style={{ textDecoration: "none" }}
-                          >
-                            <MdOutlineDashboardCustomize
-                              style={{ fontSize: "20px" }}
-                            />
-                            My Dashboard
-                          </Link>
-                        </a>
-                      </li>
-                    </ul>
-                  </div>
+                  {/* <Link to="/notification" style={{ textDecoration: "none" }}> */}
+                    <img
+                      src={notification}
+                      width={19}
+                      alt="Notifications"
+                      onClick={handleNotification}
+                    />
+                  {/* </Link> */}
+                </a>
+              </li>
+
+              <li className="nav-item">
+                <a className="nav-link" href="#">
+                  {/* <Link to="/profile" style={{ textDecoration: "none" }}> */}
+                    <img
+                      src={profile}
+                      width={19}
+                      alt="Profile"
+                      onClick={handleProfile}
+                    />
+                  {/* </Link> */}
+                </a>
+              </li>
+
+              <li>
+                <a className="nav-link" href="#">
+                  <img
+                    src={logOut}
+                    width={17}
+                    alt="Post"
+                    onClick={handleLogout}
+                  />
                 </a>
               </li>
             </ul>
           </div>
         </div>
       </nav>
-
     </>
   );
 }

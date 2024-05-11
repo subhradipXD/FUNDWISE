@@ -78,42 +78,10 @@ function Navbar() {
                 Login
               </NavLink>
             </li>
-            <li className="nav-item"></li>
-            <li className="nav-item dropdown">
-              <a
-                className="nav-link dropdown-toggle"
-                to="/"
-                role="button"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
+            <li className="nav-item">
+              <NavLink className={`nav-link ${CustomCSS.navLink}`} to="/register">
                 Sign in
-              </a>
-              <ul className="dropdown-menu">
-                <li>
-                  <a className="dropdown-item">
-                    <NavLink
-                      className={`nav-link ${CustomCSS.navLink}`}
-                      to="/investorLogin"
-                    >
-                      Investor
-                    </NavLink>
-                  </a>
-                </li>
-                <li>
-                  <hr className="dropdown-divider" />
-                </li>
-                <li>
-                  <a className="dropdown-item">
-                    <NavLink
-                      className={`nav-link ${CustomCSS.navLink}`}
-                      to="/founderLogin"
-                    >
-                      Founder
-                    </NavLink>
-                  </a>
-                </li>
-              </ul>
+              </NavLink>
             </li>
           </ul>
         </div>

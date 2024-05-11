@@ -5,38 +5,38 @@ import Footer from "../../inc/Footer";
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import swal from "sweetalert2";
 
 function Register() {
-  const [name, setName]=useState("")
-  const [phone, setPhone]=useState("")
-  const [email, setEmail]=useState("")
-  const [password, setPassword]=useState("")
-  const [confirmPassword , setConfirmPassword]=useState("")
-  const navigate = useNavigate()
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [role, setRole] = useState("");
+  const navigate = useNavigate();
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      
-        const res = await axios.post("http://localhost:2000/users/register", {
-          name,
-          phone,
-          email,
-          password,
-         role:"Founder"
+      const res = await axios.post("http://localhost:2000/users/register", {
+        name,
+        phone,
+        email,
+        password,
+        role,
+      });
+
+      if (!res.data.error) {
+        swal.fire("Success!", res.data.message, "success").then(() => {
+          navigate("/login", { replace: true });
         });
-
-        if (!res.data.error) {
-          navigate("/founderLogin", { replace: true });
-        }
-
-      } catch (err) {
-        console.log(err);
-  
+      } else {
+        swal.fire("Error!", res.data.message, "error");
+      }
+    } catch (err) {
+      console.log(err);
     }
-    //  finally {
-    //   setLoading(false);
-    // }
   };
   return (
     <>
@@ -87,10 +87,7 @@ function Register() {
 
               {/* form */}
 
-              <form
-                className=""
-                 onSubmit={handleSubmit}
-              >
+              <form className="" onSubmit={handleSubmit}>
                 <label htmlFor="validationDefault01" className="form-label">
                   Name
                 </label>
@@ -128,6 +125,38 @@ function Register() {
                   required
                 />
 
+                <label className="form-label">You are a</label>
+                <div className="d-flex">
+                  <div className="form-check me-3">
+                    <input
+                      className="form-check-input"
+                      type="radio"
+                      name="role"
+                      id="roleFounder"
+                      value="Founder"
+                      checked={role === "Founder"}
+                      onChange={(e) => setRole(e.target.value)}
+                    />
+                    <label className="form-check-label" htmlFor="roleFounder">
+                      Founder
+                    </label>
+                  </div>
+                  <div className="form-check">
+                    <input
+                      className="form-check-input"
+                      type="radio"
+                      name="role"
+                      id="roleInvestor"
+                      value="Investor"
+                      checked={role === "Investor"}
+                      onChange={(e) => setRole(e.target.value)}
+                    />
+                    <label className="form-check-label" htmlFor="roleInvestor">
+                      Investor
+                    </label>
+                  </div>
+                </div>
+
                 <label htmlFor="validationDefault05" className="form-label">
                   Password
                 </label>
@@ -154,14 +183,16 @@ function Register() {
                 />
 
                 <br />
-                <button className={`btn btn-lg btn-secondary fs-6 ${LoginCSS.btnLogin}`}>
+                <button
+                  className={`btn btn-lg btn-secondary fs-6 ${LoginCSS.btnLogin}`}
+                >
                   Sign Up
                 </button>
                 <br />
                 <small>
                   <p>
                     Already have an account?{" "}
-                    <Link to="/founderLogin">Login here...</Link>
+                    <Link to="/login">Login here...</Link>
                   </p>
                 </small>
                 <div className="col-6">{/* <p>{errMsg}</p> */}</div>

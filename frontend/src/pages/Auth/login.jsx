@@ -4,12 +4,16 @@ import LoginCSS from "./login.module.css";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useCookies } from "react-cookie";
+import swal from "sweetalert2";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  console.log(email);
+  console.log(password);
   const navigate = useNavigate();
   const [_, setCookies] = useCookies(["token"]);
+
   const handleLogin = async () => {
     try {
       const response = await axios.post(`http://localhost:2000/users/login`, {
@@ -22,7 +26,6 @@ function Login() {
 
       if (response.data.error === false) {
         setCookies("token", response.data.response.token);
-        // Handle successful login
         if (role === "Investor") {
           navigate("/feed", { replace: true });
         } else if (role === "Admin") {
@@ -30,14 +33,12 @@ function Login() {
         } else if (role === "Founder") {
           navigate("/feed", { replace: true });
         }
-        // navigate("/dashboard", { replace: true });
       } else {
-        // Handle login error
-        alert("Invalid email or password");
+        swal.fire("Error!", response.data.message, "error");
       }
     } catch (error) {
       console.error("Error fetching user details:", error);
-      alert("An error occurred while logging in");
+      swal.fire("Error!", "An error occurred while logging in", "error");
     }
   };
 
@@ -138,16 +139,13 @@ function Login() {
               </div>
               <div className="row">
                 <small>
-                  Don't have account? 
-                  <Link to="/investorRegister">Sign in here...</Link>
+                  Don't have account?
+                  <Link to="/register">Sign in here...</Link>
                 </small>
               </div>
             </div>
           </div>
         </div>
-        {/* <Link to="/" style={{ position: "absolute", right: 40, bottom: 20 }}>
-          Go to Home
-        </Link> */}
       </div>
     </>
   );
