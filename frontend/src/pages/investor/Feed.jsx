@@ -5,8 +5,9 @@ import { FaRegCommentDots } from "react-icons/fa";
 import { MdHandshake } from "react-icons/md";
 import { IoSearchOutline } from "react-icons/io5";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
-
+import { useCookies } from "react-cookie";
 import axios from "axios";
 
 function Feed() {
@@ -16,7 +17,13 @@ function Feed() {
   const [description, setDescription] = useState("");
   const [image, setImage] = useState(null);
   const [posts, setPosts] = useState([]);
+  const navigate = useNavigate();
+  const [cookies,setCookies] = useCookies(["token"]);
+  // console.log(cookies.token)
 
+  if(!cookies.token){
+    navigate("/login");
+  }
   const handleSubmit = async (e) => {
     e.preventDefault();
   

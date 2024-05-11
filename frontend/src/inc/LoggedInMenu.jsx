@@ -7,12 +7,18 @@ import { IoSearchOutline } from "react-icons/io5";
 import profile from "../assets/navImg/user.png";
 import home from "../assets/navImg/home-button.png";
 import lgot from "../assets/navImg/turn-off.png";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
-
+import { useCookies } from "react-cookie";
 import { MdOutlineDashboardCustomize } from "react-icons/md";
 
 function LoggedInMenu() {
+  const navigate = useNavigate();
+  const [cookies,setCookies, removeCookie] = useCookies(["token"]);
+  const handleLogout = ()=>{
+    removeCookie("token");
+    navigate("/login");
+  }
   return (
     <>
       <nav className="navbar navbar-expand-lg sticky-top bg-body-tertiary">
@@ -140,7 +146,7 @@ function LoggedInMenu() {
                       <li>
                         <a className="dropdown-item" href="#">
                           <img src={lgot} width={17} alt="Post" />
-                          <span className="mx-1">Log Out</span>
+                          <span className="mx-1" onClick={handleLogout}>Log Out</span>
                         </a>
                       </li>
                       <li>

@@ -3,10 +3,11 @@ import LoginImg from "../../assets/img/login-img.jpg";
 import LoginCSS from "./login.module.css";
 import { Link,useNavigate } from "react-router-dom";
 import axios from 'axios';
-
+import {useCookies} from "react-cookie"
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [_, setCookies] = useCookies(["token"]);
   const navigate = useNavigate();
   const handleLogin = async () => {
     try {
@@ -15,6 +16,7 @@ function Login() {
       console.log('Login successful:', response);
 
       if (response.data.error === false) {
+        setCookies("token",response.data.response.token);
         // Handle successful login
         if(role==="Investor"){
           navigate("/feed", { replace: true });
@@ -23,6 +25,7 @@ function Login() {
         }else if(role==="Seller"){
           navigate("/feed", { replace: true });
         }
+
         // navigate("/dashboard", { replace: true });
       } else {
         // Handle login error

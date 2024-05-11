@@ -10,8 +10,11 @@ app.use("/users", userRouter);
 app.use("/post", postRouter);
 const mongoose = require("mongoose");
 mongoose
+  // .connect(
+  //   "mongodb+srv://piupranati:l4q6zImt8q8Zbp4V@db1.yhukbpb.mongodb.net/?retryWrites=true&w=majority&appName=DB1"
+  // )
   .connect(
-    "mongodb+srv://piupranati:l4q6zImt8q8Zbp4V@db1.yhukbpb.mongodb.net/?retryWrites=true&w=majority&appName=DB1"
+    "mongodb+srv://SubhradipXD:Joydas2000@cluster0.qquwuja.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
   )
   .then(() => console.log("Database Connected"))
   .catch((e) => console.log(e));

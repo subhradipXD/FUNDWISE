@@ -1,4 +1,5 @@
 const userModel = require("../models/userModel");
+const jwt = require("jsonwebtoken");
 console.log(userModel);
 const Register = async (req, res) => {
   try {
@@ -44,11 +45,13 @@ const Login = async (req, res) => {
   if (password !== user.password) {
     res.json({ message: "Invalid Password", error: true });
   }
+  const token = jwt.sign({id: user._id},"397981b551eee4e01270afdaea4b4947fb1eda1517f69150200916b91fb08c0f")
   res.json({
     error: false,
     message: "Login success",
     response: {
       user: user,
+      token: token
     },
   });
 };
