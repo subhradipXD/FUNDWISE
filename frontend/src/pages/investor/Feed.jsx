@@ -6,7 +6,7 @@ import { MdHandshake } from "react-icons/md";
 import { IoSearchOutline } from "react-icons/io5";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
 import { useCookies } from "react-cookie";
 import axios from "axios";
 
@@ -18,28 +18,21 @@ function Feed() {
   const [postImage, setPostImage] = useState(null);
   const [posts, setPosts] = useState([]);
   const navigate = useNavigate();
-  const [cookies,setCookies] = useCookies(["token"]);
+  const [cookies, setCookies] = useCookies(["token"]);
   // console.log(cookies.token)
 
-  if(!cookies.token){
+  if (!cookies.token) {
     navigate("/");
   }
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
+  const handleSubmit = async () => {
     try {
       const formData = new FormData();
       // formData.append("user_id", profileUser._id);
       formData.append("title", title);
       formData.append("description", description);
-      formData.append("image", postImage);
-
       if (postImage !== null) {
         formData.append("image", postImage);
       }
-      console.log(title);
-      console.log(description);
-      console.log(postImage);
 
       const res = await axios.post(`${baseURL}/post/feed`, formData, {
         headers: {
@@ -60,6 +53,7 @@ function Feed() {
       getPosts(); // Refresh posts
       setTitle("");
       setDescription("");
+      setPostImage(null);
     } catch (err) {
       console.log(err);
       // Handle error
@@ -164,40 +158,51 @@ function Feed() {
             <div className="col-md-1"></div>
             <div className="col-md-8">
               <ul className="list-unstyled">
-                {posts.map((post) => (
-                  <li
-                    key={post._id}
-                    className="mb-1 shadow p-3 bg-body-tertiary rounded"
-                  >
-                    <div className="card-body">
-                      <h5 className="card-title">{post.title}</h5>
-                      <p className="card-text text-muted">{post.description}</p>
-                      <img src="" />
-                      <div className="d-flex justify-content-between">
-                        <button
-                          className="btn btn-outline-danger"
-                          style={{ fontSize: "15px" }}
-                        >
-                          <CiHeart style={{ fontSize: "20px" }} /> like
-                        </button>
-                        <button
-                          className="btn btn-outline-primary"
-                          style={{ fontSize: "15px" }}
-                        >
-                          <FaRegCommentDots style={{ fontSize: "20px" }} />{" "}
-                          Comment
-                        </button>
-                        <button
-                          className="btn btn-outline-success"
-                          style={{ fontSize: "15px" }}
-                        >
-                          <MdHandshake style={{ fontSize: "20px" }} />{" "}
-                          Interested
-                        </button>
+                {posts
+                  .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+                  .map((post) => (
+                    <li
+                      key={post._id}
+                      className="mb-1 shadow p-3 bg-body-tertiary rounded"
+                    >
+                      <div className="card-body">
+                        <h5 className="card-title">{post.title}</h5>
+                        <p className="card-text text-muted">
+                          {post.description}
+                        </p>
+                        {post.image && (
+                          <img
+                            src={`${baseURL}/post-images/${post.image}`}
+                            height={"500"}
+                            width={"500"}
+                          />
+                        )}
+
+                        <div className="d-flex justify-content-between">
+                          <button
+                            className="btn btn-outline-danger"
+                            style={{ fontSize: "15px" }}
+                          >
+                            <CiHeart style={{ fontSize: "20px" }} /> like
+                          </button>
+                          <button
+                            className="btn btn-outline-primary"
+                            style={{ fontSize: "15px" }}
+                          >
+                            <FaRegCommentDots style={{ fontSize: "20px" }} />{" "}
+                            Comment
+                          </button>
+                          <button
+                            className="btn btn-outline-success"
+                            style={{ fontSize: "15px" }}
+                          >
+                            <MdHandshake style={{ fontSize: "20px" }} />{" "}
+                            Interested
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                  </li>
-                ))}
+                    </li>
+                  ))}
               </ul>
             </div>
             <div className="col-md-3"></div>
@@ -223,11 +228,7 @@ function Feed() {
                   <img src={addPost} alt="img" width={550} />
                 </div>
                 <div className="col-md-6">
-                  <form
-                    className="shadow p-2 mb-3 bg-body-tertiary rounded"
-                    onSubmit={handleSubmit}
-                    encType="multipart/form-data"
-                  >
+                  <div className="shadow p-2 mb-3 bg-body-tertiary rounded">
                     <div className="mb-3">
                       <label
                         htmlFor="exampleFormControlInput1"
@@ -265,8 +266,8 @@ function Feed() {
                         Choose your image
                       </label>
                       <input
-                        className="form-control"
                         type="file"
+                        className="form-control"
                         id="formFileMultiple"
                         // multiple
                         accept=".jpeg, .jpg, .png, .webp"
@@ -288,11 +289,15 @@ function Feed() {
         /> */}
                     </div>
                     <div className="mb-3">
-                      <button className="btn btn-sm btn-primary" type="submit">
+                      <button
+                        className="btn btn-sm btn-primary"
+                        type="submit"
+                        onClick={handleSubmit}
+                      >
                         Add post
                       </button>
                     </div>
-                  </form>
+                  </div>
                 </div>
               </div>
             </div>

@@ -7,7 +7,7 @@ const path = require("path");
 router.get("/", showposts);
 
 const storageEngine = multer.diskStorage({
-  destination: "./public/uploads/posts/",
+  destination: "../backend/public/uploads/posts/",
   filename: function (req, file, callback) {
     callback(
       null,
@@ -15,7 +15,6 @@ const storageEngine = multer.diskStorage({
     );
   },
 });
-
 
 // file filter for multer
 const fileFilter = (req, file, callback) => {
@@ -32,9 +31,6 @@ const upload = multer({
   storage: storageEngine,
   fileFilter,
 });
-
-// console.log(upload);
-
 router.post("/feed", upload.single("image"), feed);
 
 module.exports = router;
