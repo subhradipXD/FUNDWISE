@@ -1,6 +1,40 @@
-const express = require('express');
-const { feed, showposts } = require('../controllers/postController.js');
+const express = require("express");
+const multer = require("multer");
+const { feed, showposts } = require("../controllers/postController.js");
 const router = express.Router();
-router.post('/feed',feed)
-router.get('/',showposts)
-module.exports = router
+const path = require("path");
+
+router.get("/", showposts);
+
+const storageEngine = multer.diskStorage({
+  destination: "./public/uploads/posts/",
+  filename: function (req, file, callback) {
+    callback(
+      null,
+      file.fieldname + "-" + Date.now() + path.extname(file.originalname)
+    );
+  },
+});
+
+
+// file filter for multer
+const fileFilter = (req, file, callback) => {
+  let pattern = /JPG|JPEG|PNG|SVG|jpg|jpeg|png|svg/;
+
+  if (pattern.test(path.extname(file.originalname))) {
+    callback(null, true);
+  } else {
+    callback("Error: not a valid file");
+  }
+};
+// initialize multer
+const upload = multer({
+  storage: storageEngine,
+  fileFilter,
+});
+
+// console.log(upload);
+
+router.post("/feed", upload.single("image"), feed);
+
+module.exports = router;

@@ -15,7 +15,7 @@ function Feed() {
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [image, setImage] = useState(null);
+  const [postImage, setPostImage] = useState(null);
   const [posts, setPosts] = useState([]);
   const navigate = useNavigate();
   const [cookies,setCookies] = useCookies(["token"]);
@@ -26,24 +26,37 @@ function Feed() {
   }
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     try {
-      const res = await axios.post(`${baseURL}/post/feed`, {
-        title,
-        description,
-        image,
+      const formData = new FormData();
+      // formData.append("user_id", profileUser._id);
+      formData.append("title", title);
+      formData.append("description", description);
+      formData.append("image", postImage);
+
+      if (postImage !== null) {
+        formData.append("image", postImage);
+      }
+      console.log(title);
+      console.log(description);
+      console.log(postImage);
+
+      const res = await axios.post(`${baseURL}/post/feed`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
-      
+
       if (res.data.error === false) {
         // If error is false, show the success message
         Swal.fire({
-          icon: 'success',
+          icon: "success",
           title: res.data.message,
           showConfirmButton: false,
-          timer: 2000 // Close after 2 seconds
+          timer: 2000, // Close after 2 seconds
         });
       }
-  
+
       getPosts(); // Refresh posts
       setTitle("");
       setDescription("");
@@ -52,7 +65,6 @@ function Feed() {
       // Handle error
     }
   };
-  
 
   const getPosts = async () => {
     try {
@@ -143,7 +155,7 @@ function Feed() {
                   aria-label="Search"
                 />
                 <button className="btn btn-outline-primary" type="submit">
-                <IoSearchOutline style={{ fontSize: "20px" }} />
+                  <IoSearchOutline style={{ fontSize: "20px" }} />
                 </button>
               </form>
             </div>
@@ -160,7 +172,7 @@ function Feed() {
                     <div className="card-body">
                       <h5 className="card-title">{post.title}</h5>
                       <p className="card-text text-muted">{post.description}</p>
-                      <img src=""/>
+                      <img src="" />
                       <div className="d-flex justify-content-between">
                         <button
                           className="btn btn-outline-danger"
@@ -214,6 +226,7 @@ function Feed() {
                   <form
                     className="shadow p-2 mb-3 bg-body-tertiary rounded"
                     onSubmit={handleSubmit}
+                    encType="multipart/form-data"
                   >
                     <div className="mb-3">
                       <label
@@ -243,20 +256,36 @@ function Feed() {
                         className="form-control"
                         id="exampleFormControlTextarea1"
                         rows={3}
-                       value={description}
+                        value={description}
                       />
                     </div>
 
                     <div className="mb-3">
                       <label htmlFor="formFileMultiple" className="form-label">
-                        Multiple files input example
+                        Choose your image
                       </label>
                       <input
                         className="form-control"
                         type="file"
                         id="formFileMultiple"
-                        multiple
+                        // multiple
+                        accept=".jpeg, .jpg, .png, .webp"
+                        onChange={(e) => {
+                          // setImagePreview(URL.createObjectURL(e.target.files[0]));
+                          setPostImage(e.target.files[0]);
+                        }}
                       />
+
+                      {/* <input
+          type="file"
+          id="postImagePicker"
+          className="hidden"
+          accept=".jpeg, .jpg, .png, .webp"
+          onChange={(e) => {
+            setImagePreview(URL.createObjectURL(e.target.files[0]));
+            setPostImage(e.target.files[0]);
+          }}
+        /> */}
                     </div>
                     <div className="mb-3">
                       <button className="btn btn-sm btn-primary" type="submit">
