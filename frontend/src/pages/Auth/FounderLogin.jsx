@@ -1,53 +1,81 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import LoginImg from "../../assets/img/login-img.jpg";
 import LoginCSS from "./login.module.css";
-import { Link,useNavigate } from "react-router-dom";
-import axios from 'axios';
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 function Login() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const handleLogin = async () => {
     try {
-      const response = await axios.post(`http://localhost:2000/users/login`, { email: email, password:password});
+      const response = await axios.post(`http://localhost:2000/users/login`, {
+        email: email,
+        password: password,
+      });
       const role = response.data.response.user.role;
-      console.log('Login successful:', response);
+      console.log("Login successful:", response);
 
       if (response.data.error === false) {
         // Handle successful login
-        if(role==="Investor"){
+        if (role === "Investor") {
           navigate("/feed", { replace: true });
-        }else if(role==="Admin"){
+        } else if (role === "Admin") {
           navigate("/dashboard", { replace: true });
-        }else if(role==="Seller"){
+        } else if (role === "Founder") {
           navigate("/feed", { replace: true });
         }
         // navigate("/dashboard", { replace: true });
       } else {
         // Handle login error
-        alert('Invalid email or password');
+        alert("Invalid email or password");
       }
     } catch (error) {
-      console.error('Error fetching user details:', error);
-      alert('An error occurred while logging in');
+      console.error("Error fetching user details:", error);
+      alert("An error occurred while logging in");
     }
   };
 
   return (
     <>
-      <div className="container-fluid d-flex justify-content-center align-items-center min-vh-100" style={{ background: "linear-gradient(to right, #FFFFFF, #FDFD96)" }}>
+      <div
+        className="container-fluid d-flex justify-content-center align-items-center min-vh-100"
+        style={{ background: "linear-gradient(to right, #FFFFFF, #FDFD96)" }}
+      >
         {/* --------------------- Login Container ------------------------ */}
-        <div className={`row border ${LoginCSS.rounded5} p-3 bg-white shadow ${LoginCSS.boxArea}`}>
+        <div
+          className={`row border ${LoginCSS.rounded5} p-3 bg-white shadow ${LoginCSS.boxArea}`}
+        >
           {/* ------------------------- Left Box -------------------------- */}
-          <div className={`col-md-6 ${LoginCSS.rounded4} d-flex justify-content-center align-items-center flex-column ${LoginCSS.leftBox}`} style={{ background: "#a6ad57" }}>
+          <div
+            className={`col-md-6 ${LoginCSS.rounded4} d-flex justify-content-center align-items-center flex-column ${LoginCSS.leftBox}`}
+            style={{ background: "#a6ad57" }}
+          >
             <div className="featured-image mb-3">
-              <img src={LoginImg} className="img-fluid" style={{ width: 250 }} alt="Login" />
+              <img
+                src={LoginImg}
+                className="img-fluid"
+                style={{ width: 250 }}
+                alt="Login"
+              />
             </div>
-            <p className="text-white fs-2" style={{ fontFamily: '"Courier New", Courier, monospace', fontWeight: 600 }}>
+            <p
+              className="text-white fs-2"
+              style={{
+                fontFamily: '"Courier New", Courier, monospace',
+                fontWeight: 600,
+              }}
+            >
               Be Verified
             </p>
-            <small className="text-white text-wrap text-center" style={{ width: "17rem", fontFamily: '"Courier New", Courier, monospace' }}>
+            <small
+              className="text-white text-wrap text-center"
+              style={{
+                width: "17rem",
+                fontFamily: '"Courier New", Courier, monospace',
+              }}
+            >
               Join experienced Designers on this platform.
             </small>
           </div>
@@ -78,8 +106,15 @@ function Login() {
               </div>
               <div className="input-group mb-5 d-flex justify-content-between">
                 <div className="form-check">
-                  <input type="checkbox" className="form-check-input" id="formCheck" />
-                  <label htmlFor="formCheck" className="form-check-label text-secondary">
+                  <input
+                    type="checkbox"
+                    className="form-check-input"
+                    id="formCheck"
+                  />
+                  <label
+                    htmlFor="formCheck"
+                    className="form-check-label text-secondary"
+                  >
                     <small>Remember Me</small>
                   </label>
                 </div>
@@ -90,21 +125,25 @@ function Login() {
                 </div>
               </div>
               <div className="input-group mb-3">
-                <button className={`btn btn-lg btn-secondary fs-6 ${LoginCSS.btnLogin}`} onClick={handleLogin}>
+                <button
+                  className={`btn btn-lg btn-secondary fs-6 ${LoginCSS.btnLogin}`}
+                  onClick={handleLogin}
+                >
                   Login
                 </button>
               </div>
               <div className="row">
                 <small>
-                  Don't have account? <a href="#">Sign Up</a>
+                  Don't have account? 
+                  <Link to="/founderRegister">Sign in here...</Link>
                 </small>
               </div>
             </div>
           </div>
         </div>
-        <Link to="/" style={{ position: "absolute", right: 40, bottom: 20 }}>
+        {/* <Link to="/" style={{ position: "absolute", right: 40, bottom: 20 }}>
           Go to Home
-        </Link>
+        </Link> */}
       </div>
     </>
   );

@@ -1,5 +1,6 @@
 const userModel = require("../models/userModel");
 console.log(userModel);
+
 const Register = async (req, res) => {
   try {
     const { name, phone, email, password, role } = req.body; //destructure
@@ -34,30 +35,31 @@ const Register = async (req, res) => {
     });
   }
 };
+
+const jwt = require('jsonwebtoken');
+
 const Login = async (req, res) => {
   const { email, password } = req.body;
   const user = await userModel.findOne({ email });
-
+console.log(user);
   if (!user) {
     return res.json({ error: true, message: "User doesn't exist" });
   }
   if (password !== user.password) {
     res.json({ message: "Invalid Password", error: true });
   }
+  const token = jwt.sign({id:user._id}, "hojoborolo");
   res.json({
     error: false,
     message: "Login success",
     response: {
       user: user,
+      token:token
     },
   });
 };
-const users = async (req, res) => {
-  console.log("Hi bal ");
-  res.status(200).send("shubhradip paglachoda");
-};
+
 module.exports = {
-  users,
   Register,
   Login,
 };

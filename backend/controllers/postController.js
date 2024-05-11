@@ -2,7 +2,9 @@ const postModel = require("../models/postModel");
 
 const feed = async (req, res) => {
   try {
-    const { userId, title, description, image, postBy } = req.body; //destructure
+    const { userId, title, description, postBy } = req.body; //destructure
+    const image = req.file !== undefined ? req.file.filename : "";
+    console.log(image);
     const newPost = new postModel({
       userId,
       title,

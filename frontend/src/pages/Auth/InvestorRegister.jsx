@@ -7,32 +7,29 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 function Register() {
-  const [name, setName]=useState("")
-  const [phone, setPhone]=useState("")
-  const [email, setEmail]=useState("")
-  const [password, setPassword]=useState("")
-  const [confirmPassword , setConfirmPassword]=useState("")
-  const navigate = useNavigate()
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const navigate = useNavigate();
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      
-        const res = await axios.post("http://localhost:2000/users/register", {
-          name,
-          phone,
-          email,
-          password,
-         role:"Investor"
-        });
+      const res = await axios.post("http://localhost:2000/users/register", {
+        name,
+        phone,
+        email,
+        password,
+        role: "Investor",
+      });
 
-        if (!res.data.error) {
-          navigate("/login", { replace: true });
-        }
-
-      } catch (err) {
-        console.log(err);
-  
+      if (!res.data.error) {
+        navigate("/investorLogin", { replace: true });
+      }
+    } catch (err) {
+      console.log(err);
     }
     //  finally {
     //   setLoading(false);
@@ -87,10 +84,7 @@ function Register() {
 
               {/* form */}
 
-              <form
-                className=""
-                 onSubmit={handleSubmit}
-              >
+              <form className="" onSubmit={handleSubmit}>
                 <label htmlFor="validationDefault01" className="form-label">
                   Name
                 </label>
@@ -154,14 +148,16 @@ function Register() {
                 />
 
                 <br />
-                <button className={`btn btn-lg btn-secondary fs-6 ${LoginCSS.btnLogin}`}>
+                <button
+                  className={`btn btn-lg btn-secondary fs-6 ${LoginCSS.btnLogin}`}
+                >
                   Sign Up
                 </button>
                 <br />
                 <small>
                   <p>
                     Already have an account?{" "}
-                    <Link to="/login">Login here...</Link>
+                    <Link to="/investorLogin">Login here...</Link>
                   </p>
                 </small>
                 <div className="col-6">{/* <p>{errMsg}</p> */}</div>
