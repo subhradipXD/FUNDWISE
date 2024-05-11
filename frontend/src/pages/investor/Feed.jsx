@@ -22,7 +22,7 @@ function Feed() {
   // console.log(cookies.token)
 
   if(!cookies.token){
-    navigate("/login");
+    navigate("/");
   }
   const handleSubmit = async (e) => {
     e.preventDefault();
