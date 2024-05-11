@@ -15,10 +15,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
-<<<<<<< HEAD
     "js-cookie": "^3.0.5",
-=======
->>>>>>> 6f173bb0c613f8bd3db24d8c7b0a01ff68c12d7a
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.3.2",
     "multer": "^1.4.5-lts.1",

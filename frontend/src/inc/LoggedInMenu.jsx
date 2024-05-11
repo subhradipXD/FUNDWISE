@@ -17,7 +17,7 @@ function LoggedInMenu() {
   const [cookies,setCookies, removeCookie] = useCookies(["token"]);
   const handleLogout = ()=>{
     removeCookie("token");
-    navigate("/login");
+    navigate("/investorLogin");
   }
   return (
     <>

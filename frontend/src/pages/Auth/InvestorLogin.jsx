@@ -3,11 +3,13 @@ import LoginImg from "../../assets/img/login-img.jpg";
 import LoginCSS from "./login.module.css";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useCookies } from "react-cookie";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const [_, setCookies] = useCookies(["token"]);
   const handleLogin = async () => {
     try {
       const response = await axios.post(`http://localhost:2000/users/login`, {
@@ -19,6 +21,7 @@ function Login() {
       console.log(response.data);
 
       if (response.data.error === false) {
+        setCookies("token", response.data.response.token);
         // Handle successful login
         if (role === "Investor") {
           navigate("/feed", { replace: true });

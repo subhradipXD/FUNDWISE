@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import LoginImg from "../../assets/img/login-img.jpg";
 import LoginCSS from "./login.module.css";
-<<<<<<< HEAD:frontend/src/pages/Auth/Login.jsx
 import { Link,useNavigate } from "react-router-dom";
 import axios from 'axios';
 import {useCookies} from "react-cookie"
@@ -9,14 +8,6 @@ function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [_, setCookies] = useCookies(["token"]);
-=======
-import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
-
-function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
->>>>>>> 6f173bb0c613f8bd3db24d8c7b0a01ff68c12d7a:frontend/src/pages/Auth/FounderLogin.jsx
   const navigate = useNavigate();
   const handleLogin = async () => {
     try {
