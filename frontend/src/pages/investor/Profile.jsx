@@ -4,7 +4,7 @@ import { BiInfoCircle } from "react-icons/bi";
 import { FaPeopleRobbery } from "react-icons/fa6";
 import Footer from "../../inc/Footer";
 import LoggedInMenu from "../../inc/LoggedInMenu";
-import user from "../../assets/navImg/user.png";
+import userImage from "../../assets/navImg/user.png";
 
 import { CiHeart } from "react-icons/ci";
 import { FaRegCommentDots } from "react-icons/fa";
@@ -15,15 +15,16 @@ import Swal from "sweetalert2";
 import { useCookies } from "react-cookie";
 import { useNavigate } from "react-router-dom";
 
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState, useContext } from "react";
 import ClipboardJS from "clipboard";
 import axios from "axios";
+import { UserContext } from "../../Context/ContextProvider";
 
 function UserProfile() {
   const baseURL = "http://localhost:2000";
   const [posts, setPosts] = useState([]);
-
   const navigate = useNavigate();
+  const { user, userPosts } = useContext(UserContext);
   const [cookies, setCookies] = useCookies(["token"]);
   if (!cookies.token) {
     navigate("/");
@@ -100,14 +101,14 @@ function UserProfile() {
           <div className="row">
             <div className="col-md-4">
               <img
-                src={user}
+                src={userImage}
                 width={200}
                 alt="User"
                 className="img-fluid rounded-circle mb-3 shadow mb-md-0 bg-body-tertiary rounded"
               />
             </div>
             <div className="col-md-8 shadow p-4 p-md-5 bg-body-tertiary rounded">
-              <h2>User Name</h2>
+              <h2>{user && user.name}</h2>
               <div className="d-flex align-items-center mb-3">
                 <BiUser className="me-2" /> {/* React Icon for user */}
                 <span ref={usernameRef} data-username="username">
@@ -123,11 +124,11 @@ function UserProfile() {
 
               <p>
                 <MdAlternateEmail /> {/* React Icon for phone */}
-                Email ID: <span>abc@gmail.com</span>
+                Email ID: <span>{user && user.email}</span>
               </p>
               <p>
                 <BiPhone /> {/* React Icon for phone */}
-                Phone Number: <span>123-456-7890</span>
+                Phone Number: <span>+91 {user && user.phone}</span>
               </p>
               <p>
                 <BiInfoCircle /> {/* React Icon for info */}
@@ -157,7 +158,7 @@ function UserProfile() {
           <div className="col-md-6">
             <h3>Your Timeline Posts</h3>
             <ul className="list-unstyled">
-              {posts.map((post) => (
+              {userPosts.map((post) => (
                 <li
                   key={post._id}
                   className="mb-3 shadow p-3 bg-body-tertiary rounded"

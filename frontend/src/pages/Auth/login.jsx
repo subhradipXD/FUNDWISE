@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import LoginImg from "../../assets/img/login-img.jpg";
 import LoginCSS from "./login.module.css";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useCookies } from "react-cookie";
 import swal from "sweetalert2";
+import { UserContext } from "../../Context/ContextProvider";
 
 function Login() {
   const [email, setEmail] = useState("");

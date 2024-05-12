@@ -1,3 +1,4 @@
+const postModel = require("../models/postModel");
 const userModel = require("../models/userModel");
 const jwt = require("jsonwebtoken");
 console.log(userModel);
@@ -40,24 +41,26 @@ const Register = async (req, res) => {
 const Login = async (req, res) => {
   const { email, password } = req.body;
   const user = await userModel.findOne({ email });
-console.log(user);
+  console.log(user);
   if (!user) {
     return res.json({ error: true, message: "User doesn't exist" });
   }
   if (password !== user.password) {
     res.json({ message: "Invalid Password", error: true });
   }
-  const token = jwt.sign({id: user._id},"397981b551eee4e01270afdaea4b4947fb1eda1517f69150200916b91fb08c0f")
+  const token = jwt.sign(
+    { id: user._id },
+    "397981b551eee4e01270afdaea4b4947fb1eda1517f69150200916b91fb08c0f"
+  );
   res.json({
     error: false,
     message: "Login success",
     response: {
       user: user,
-      token: token
+      token: token,
     },
   });
 };
-
 
 // export const editUser = async (req, res) => {
 //   try {
@@ -77,9 +80,36 @@ console.log(user);
 //   }
 // };
 
+const getCurrentUser = async (req, res) => {
+  try {
+    const hashID = req.params.hashID;
+    var decoded = jwt.verify(
+      hashID,
+      "397981b551eee4e01270afdaea4b4947fb1eda1517f69150200916b91fb08c0f"
+    );
+    console.log(decoded);
+    const userId = decoded.id;
+    const User = await userModel.findById(userId);
+    const UserPosts = await postModel.find({ userId });
+    console.log(UserPosts);
+    if (!User) {
+      return res.status(400).json({ message: "User not found" });
+    }
+    res.status(200).json({
+      error: false,
+      response: {
+        User,
+        UserPosts,
+      },
+    });
+  } catch (e) {
+    res.status(400).send(e);
+  }
+};
 
 module.exports = {
   Register,
   Login,
+  getCurrentUser,
   // editUser,
 };

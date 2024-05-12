@@ -4,12 +4,13 @@ import { CiHeart } from "react-icons/ci";
 import { FaRegCommentDots } from "react-icons/fa";
 import { MdHandshake } from "react-icons/md";
 import { IoSearchOutline } from "react-icons/io5";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import "./feed.css";
 import { useCookies } from "react-cookie";
 import axios from "axios";
+import { UserContext } from "../../Context/ContextProvider";
 
 function Feed() {
   const baseURL = "http://localhost:2000";
@@ -20,6 +21,7 @@ function Feed() {
   const [posts, setPosts] = useState([]);
   const navigate = useNavigate();
   const [cookies, setCookies] = useCookies(["token"]);
+  const { user } = useContext(UserContext);
 
   if (!cookies.token) {
     navigate("/");
@@ -27,7 +29,7 @@ function Feed() {
   const handleSubmit = async () => {
     try {
       const formData = new FormData();
-      // formData.append("user_id", profileUser._id);
+      formData.append("userId", user._id);
       formData.append("title", title);
       formData.append("description", description);
       if (postImage !== null) {
