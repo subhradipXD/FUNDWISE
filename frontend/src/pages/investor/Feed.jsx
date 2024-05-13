@@ -162,51 +162,62 @@ function Feed() {
             <div className="col-md-1"></div>
             <div className="col-md-8">
               <ul className="list-unstyled">
-                {posts
-                  .map((post) => (
-                    <li
-                      key={post._id}
-                      className="mb-1 shadow p-3 bg-body-tertiary rounded"
-                    >
-                      <div className="card-body">
-                        <h5 className="card-title">{post.title}</h5>
-                        <p className="card-text text-muted mt-2">
-                          {post.description}
-                        </p>
-                        {post.image && (
-                          <div className="img-container mt-3">
-                            <img
-                              src={`${baseURL}/post-images/${post.image}`}
-                              width={"500"}
-                            />
-                          </div>
-                        )}
-
-                        <div className="d-flex justify-content-between mt-5">
-                          <button
-                            className="btn btn-outline-danger"
-                            style={{ fontSize: "15px" }}
-                          >
-                            <CiHeart style={{ fontSize: "20px" }} /> like
-                          </button>
-                          <button
-                            className="btn btn-outline-primary"
-                            style={{ fontSize: "15px" }}
-                          >
-                            <FaRegCommentDots style={{ fontSize: "20px" }} />{" "}
-                            Comment
-                          </button>
-                          <button
-                            className="btn btn-outline-success"
-                            style={{ fontSize: "15px" }}
-                          >
-                            <MdHandshake style={{ fontSize: "20px" }} />{" "}
-                            Interested
-                          </button>
+                {posts.map((post) => (
+                  <li
+                    key={post._id}
+                    className="mb-1 shadow p-3 bg-body-tertiary rounded"
+                  >
+                    <div className="card-body">
+                      <h5 className="card-title">{post.title}</h5>
+                      <p className="card-text text-muted mt-2">
+                        {post.description}
+                      </p>
+                      <span style={{ fontSize: "0.8rem", color: "#6c757d" }}>
+                        <small>
+                          {new Date(`${post.createdAt}`).toLocaleDateString(
+                            "en-US",
+                            {
+                              day: "numeric",
+                              month: "long",
+                              year: "numeric",
+                              ordinalDate: true,
+                            }
+                          )}
+                        </small>
+                      </span>
+                      {post.image && (
+                        <div className="img-container mt-3">
+                          <img
+                            src={`${baseURL}/post-images/${post.image}`}
+                            width={"500"}
+                          />
                         </div>
+                      )}
+                      <div className="d-flex justify-content-between mt-5">
+                        <button
+                          className="btn btn-outline-danger"
+                          style={{ fontSize: "15px" }}
+                        >
+                          <CiHeart style={{ fontSize: "20px" }} /> like
+                        </button>
+                        <button
+                          className="btn btn-outline-primary"
+                          style={{ fontSize: "15px" }}
+                        >
+                          <FaRegCommentDots style={{ fontSize: "20px" }} />{" "}
+                          Comment
+                        </button>
+                        <button
+                          className="btn btn-outline-success"
+                          style={{ fontSize: "15px" }}
+                        >
+                          <MdHandshake style={{ fontSize: "20px" }} />{" "}
+                          Interested
+                        </button>
                       </div>
-                    </li>
-                  ))}
+                    </div>
+                  </li>
+                ))}
               </ul>
             </div>
             <div className="col-md-3"></div>

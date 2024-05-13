@@ -136,14 +136,14 @@ function LoggedInMenu() {
 
               <li className="nav-item">
                 <a className="nav-link" href="#">
-                  {/* <Link to="/profile" style={{ textDecoration: "none" }}> */}
+                  <Link to="/profile" style={{ textDecoration: "none" }}>
                     <img
                       src={profile}
                       width={19}
                       alt="Profile"
                       onClick={handleProfile}
                     />
-                  {/* </Link> */}
+                  </Link>
                 </a>
               </li>
 

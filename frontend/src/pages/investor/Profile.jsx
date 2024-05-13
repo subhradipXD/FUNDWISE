@@ -112,7 +112,7 @@ function UserProfile() {
               <div className="d-flex align-items-center mb-3">
                 <BiUser className="me-2" /> {/* React Icon for user */}
                 <span ref={usernameRef} data-username="username">
-                  username
+                {user && user.name}
                 </span>
                 <button
                   className="btn btn-sm btn-primary ms-auto copy-username"
@@ -128,7 +128,7 @@ function UserProfile() {
               </p>
               <p>
                 <BiPhone /> {/* React Icon for phone */}
-                Phone Number: <span>+91 {user && user.phone}</span>
+                Phone Number: <span>{user && user.phone}</span>
               </p>
               <p>
                 <BiInfoCircle /> {/* React Icon for info */}
