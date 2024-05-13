@@ -7,14 +7,19 @@ export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [userPosts, setUserPosts] = useState([]);
   const [cookies, setCookies] = useCookies(["token"]);
+
     useEffect(()=>{
         const getCurrentUser = async (hashedUserID)=>{
             const res = await axios.get(`http://localhost:2000/users/currentuser/${hashedUserID}`);
             setUser(res.data.response.User);
             setUserPosts(res.data.response.UserPosts);
         }
-        getCurrentUser(cookies.token)
-    },[]);
+
+        if(window.location.pathname=="/feed" || window.location.pathname=="/profile"){
+          getCurrentUser(cookies.token)
+        }
+        
+    },[window.location.pathname]);
 
   return (
     <UserContext.Provider value={{ user, setUser, userPosts, setUserPosts }}>
