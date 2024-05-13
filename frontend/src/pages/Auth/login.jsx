@@ -21,17 +21,16 @@ function Login() {
         email: email,
         password: password,
       });
-      const role = response.data.response.user.role;
       console.log("Login successful:", response);
       console.log(response.data);
 
       if (response.data.error === false) {
         setCookies("token", response.data.response.token);
-        if (role === "Investor") {
+        if (response.data.response.user.role === "Investor") {
           navigate("/feed", { replace: true });
-        } else if (role === "Admin") {
+        } else if (response.data.response.user.role === "Admin") {
           navigate("/dashboard", { replace: true });
-        } else if (role === "Founder") {
+        } else if (response.data.response.user.role === "Founder") {
           navigate("/feed", { replace: true });
         }
       } else {
@@ -39,7 +38,6 @@ function Login() {
       }
     } catch (error) {
       console.error("Error fetching user details:", error);
-      swal.fire("Error!", "An error occurred while logging in", "error");
     }
   };
 
@@ -111,19 +109,6 @@ function Login() {
                 />
               </div>
               <div className="input-group mb-5 d-flex justify-content-between">
-                <div className="form-check">
-                  <input
-                    type="checkbox"
-                    className="form-check-input"
-                    id="formCheck"
-                  />
-                  <label
-                    htmlFor="formCheck"
-                    className="form-check-label text-secondary"
-                  >
-                    <small>Remember Me</small>
-                  </label>
-                </div>
                 <div className="forgot">
                   <small>
                     <a href="#">Forgot Password?</a>

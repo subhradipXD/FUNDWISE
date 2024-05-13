@@ -187,7 +187,10 @@ function UserProfile() {
               </p>
               <p>
                 <BiInfoCircle /> {/* React Icon for info */}
-                About: {user && user.about? user.about : "Lorem ipsum dolor sit amet, consectetur adipiscing elit.Sed quis justo sed urna volutpat tincidunt."}
+                About:{" "}
+                {user && user.about
+                  ? user.about
+                  : "Lorem ipsum dolor sit amet, consectetur adipiscing elit.Sed quis justo sed urna volutpat tincidunt."}
               </p>
               <p>
                 <FaPeopleRobbery /> {/* React Icon for followers */}
@@ -225,16 +228,18 @@ function UserProfile() {
                     >
                       {post.description}
                     </p>
-                    <span style={{ fontSize: "0.6rem", color: "#6c757d" }}>
-                      {new Date(`${post.createdAt}`).toLocaleDateString(
-                        "en-US",
-                        {
-                          day: "numeric",
-                          month: "long",
-                          year: "numeric",
-                          ordinalDate: true,
-                        }
-                      )}
+                    <span style={{ fontSize: "0.8rem", color: "#6c757d" }}>
+                      <small>
+                        {new Date(`${post.createdAt}`).toLocaleDateString(
+                          "en-US",
+                          {
+                            day: "numeric",
+                            month: "long",
+                            year: "numeric",
+                            ordinalDate: true,
+                          }
+                        )}
+                      </small>
                     </span>
                     {post.image && (
                       <div className="img-container mt-3">
