@@ -21,7 +21,7 @@ function Feed() {
   const [posts, setPosts] = useState([]);
   const navigate = useNavigate();
   const [cookies, setCookies] = useCookies(["token"]);
-  const { user } = useContext(UserContext);
+  const { user, userPosts, setUserPosts } = useContext(UserContext);
 
   if (!cookies.token) {
     navigate("/");
@@ -50,6 +50,7 @@ function Feed() {
           showConfirmButton: false,
           timer: 2000, // Close after 2 seconds
         });
+        setUserPosts((prevPosts) => [...prevPosts, res.data.post]);
       }
 
       getPosts(); // Refresh posts

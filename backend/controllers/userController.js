@@ -76,7 +76,7 @@ const editUser = async (req, res) => {
       return res.status(400).json({ message: "User not found" , error:true});
     }
 
-    res.json({ message: "Your profile updated successfully", error: false });
+    res.json({ message: "Your profile updated successfully", error: false,response:User});
   } catch (e) {
     res.sendStatus(400).send(e);
   }

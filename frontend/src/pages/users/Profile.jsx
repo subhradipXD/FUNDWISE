@@ -25,7 +25,7 @@ function UserProfile() {
   const baseURL = "http://localhost:2000";
   const [posts, setPosts] = useState([]);
   const navigate = useNavigate();
-  const { user, userPosts } = useContext(UserContext);
+  const { user,setUser, userPosts } = useContext(UserContext);
   const [cookies, setCookies] = useCookies(["token"]);
 
   if (!cookies.token) {
@@ -35,7 +35,7 @@ function UserProfile() {
   const usernameRef = useRef(null);
 
   useEffect(() => {
-    getPosts();
+    // getPosts();
 
     const clipboard = new ClipboardJS(".copy-username", {
       text: function (trigger) {
@@ -53,19 +53,20 @@ function UserProfile() {
     };
   }, []);
 
-  const getPosts = async () => {
-    try {
-      const res = await axios.get(`${baseURL}/post/`);
-      const sortedPosts = res.data.sort(
-        (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
-      );
-      setPosts(sortedPosts.reverse());
-    } catch (err) {
-      console.log(err);
-    }
-  };
+  // const getPosts = async () => {
+  //   try {
+  //     const res = await axios.get(`${baseURL}/post/`);
+  //     const sortedPosts = res.data.sort(
+  //       (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
+  //     );
+  //     setPosts(sortedPosts.reverse());
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
 
   const [imagePreview, setImagePreview] = useState("");
+  const [originalUserData, setOriginalUserData] = useState(null);
   const [newEmail, setNewEmail] = useState("");
   const [newPhoneNumber, setPhoneNumber] = useState("");
   const [newName, setNewName] = useState("");
@@ -73,7 +74,17 @@ function UserProfile() {
   const [about, setAbout] = useState("");
 
   const [avatar, setAvatar] = useState(null);
-
+  useEffect(() => {
+    // Initialize state variables with original user data
+    if (user) {
+      setOriginalUserData(user);
+      setNewEmail(user.email);
+      setPhoneNumber(user.phone);
+      setNewName(user.name);
+      setUserName(user.username);
+      setAbout(user.about);
+    }
+  }, [user]);
   // Function to handle file input change and update image preview
   const handleImageChange = (event) => {
     const file = event.target.files[0];
@@ -123,6 +134,7 @@ function UserProfile() {
           showConfirmButton: false,
           timer: 2000,
         });
+        setUser(res.data.response);
       }
     } catch (error) {
       // Handle errors
@@ -154,7 +166,7 @@ function UserProfile() {
               <div className="d-flex align-items-center mb-3">
                 <BiUser className="me-2" /> {/* React Icon for user */}
                 <span ref={usernameRef} data-username="username">
-                  {user && user.name}
+                  {user && user.username}
                 </span>
               </div>
 
@@ -196,7 +208,12 @@ function UserProfile() {
           <div className="col-md-6">
             <h3>Your Timeline Posts</h3>
             <ul className="list-unstyled">
-              {userPosts.map((post) => (
+              {userPosts.
+              sort(
+                (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+              )
+              .
+              map((post) => (
                 <li
                   key={post._id}
                   className="mb-3 shadow p-3 bg-body-tertiary rounded"
@@ -325,7 +342,7 @@ function UserProfile() {
                     type="email"
                     className="form-control custom-input"
                     id="exampleFormControlInput1"
-                    placeholder={user && user.email}
+                    value={newEmail}
                     onChange={(e) => {
                       setNewEmail(e.target.value);
                     }}
@@ -343,6 +360,7 @@ function UserProfile() {
                     className="form-control custom-input"
                     id="exampleFormControlInput1"
                     placeholder="Phone number"
+                    value={newPhoneNumber}
                     onChange={(e) => {
                       setPhoneNumber(e.target.value);
                     }}
@@ -360,6 +378,7 @@ function UserProfile() {
                     className="form-control custom-input"
                     id="exampleFormControlInput1"
                     placeholder="First Name"
+                    value={newName}
                     onChange={(e) => {
                       setNewName(e.target.value);
                     }}
@@ -378,6 +397,7 @@ function UserProfile() {
                     className="form-control custom-input"
                     id="exampleFormControlInput1"
                     placeholder="Username"
+                    value={newUserName}
                     onChange={(e) => {
                       setUserName(e.target.value);
                     }}
@@ -394,6 +414,7 @@ function UserProfile() {
                     className="form-control"
                     id="exampleFormControlTextarea1"
                     rows={3}
+                    value={about}
                     // defaultValue={user &&  user.about}
                     onChange={(e) => {
                       setAbout(e.target.value);
