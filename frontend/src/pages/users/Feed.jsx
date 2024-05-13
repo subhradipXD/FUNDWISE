@@ -169,7 +169,10 @@ function Feed() {
                   >
                     <div className="card-body">
                       <h6 className="card-title">{post.title}</h6>
-                      <p className="card-text mt-2" style={{ fontSize: "0.8rem" }}>
+                      <p
+                        className="card-text mt-2"
+                        style={{ fontSize: "0.8rem" }}
+                      >
                         {post.description}
                       </p>
                       <span style={{ fontSize: "0.8rem", color: "#6c757d" }}>
@@ -297,6 +300,7 @@ function Feed() {
                         className="btn btn-sm btn-primary"
                         type="submit"
                         onClick={handleSubmit}
+                        data-bs-dismiss="modal"
                       >
                         Add post
                       </button>

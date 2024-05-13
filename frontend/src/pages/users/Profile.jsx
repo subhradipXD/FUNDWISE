@@ -33,19 +33,6 @@ function UserProfile() {
   }
 
   const usernameRef = useRef(null);
-  const handleCopyUsername = () => {
-    if (usernameRef.current) {
-      const username = usernameRef.current.getAttribute("data-username");
-      navigator.clipboard
-        .writeText(username)
-        .then(() => {
-          alert("Username copied to clipboard!");
-        })
-        .catch((err) => {
-          console.error("Failed to copy username: ", err);
-        });
-    }
-  };
 
   useEffect(() => {
     getPosts();
@@ -169,12 +156,6 @@ function UserProfile() {
                 <span ref={usernameRef} data-username="username">
                   {user && user.name}
                 </span>
-                <button
-                  className="btn btn-sm btn-primary ms-auto copy-username"
-                  onClick={handleCopyUsername}
-                >
-                  Copy Username
-                </button>
               </div>
 
               <p>
@@ -201,7 +182,7 @@ function UserProfile() {
                   type="button"
                   className="btn btn-primary me-md-2"
                   data-bs-toggle="modal"
-                  data-bs-target="#exampleModal"
+                  data-bs-target="#exampleModal2"
                 >
                   Edit Profile
                 </button>
@@ -276,7 +257,7 @@ function UserProfile() {
       {/* modal */}
       <div
         className="modal fade custom-modal"
-        id="exampleModal"
+        id="exampleModal2"
         tabIndex="-1"
         aria-labelledby="exampleModalLabel"
         aria-hidden="true"
@@ -433,6 +414,7 @@ function UserProfile() {
                 type="button"
                 className="btn btn-primary custom-btn-primary"
                 onClick={handleEditProfile}
+                data-bs-dismiss="modal"
               >
                 Save changes
               </button>

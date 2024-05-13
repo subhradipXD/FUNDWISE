@@ -172,6 +172,7 @@ function LoggedInMenu() {
                   type="button"
                   className="btn btn-danger"
                   onClick={handleLogout}
+                  data-bs-dismiss="modal"
                 >
                   LogOut
                 </button>
