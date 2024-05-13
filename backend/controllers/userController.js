@@ -2,6 +2,7 @@ const postModel = require("../models/postModel");
 const userModel = require("../models/userModel");
 const jwt = require("jsonwebtoken");
 console.log(userModel);
+// require('dotenv').config();
 
 const Register = async (req, res) => {
   try {
@@ -48,10 +49,7 @@ const Login = async (req, res) => {
   if (password !== user.password) {
     res.json({ message: "Invalid Password", error: true });
   }
-  const token = jwt.sign(
-    { id: user._id },
-    "397981b551eee4e01270afdaea4b4947fb1eda1517f69150200916b91fb08c0f"
-  );
+  const token = jwt.sign({ id: user._id }, process.env.HashID);
   res.json({
     error: false,
     message: "Login success",
@@ -62,31 +60,32 @@ const Login = async (req, res) => {
   });
 };
 
-// export const editUser = async (req, res) => {
-//   try {
-//     const user_id = req.params.userID;
-//     const { name, email } = req.body;
-//     const User = await UserModel.findByIdAndUpdate(
-//       user_id,
-//       { name, email },
-//       { new: true }
-//     );
-//     if (!User) {
-//       return res.status(400).json({ message: "User not found" });
-//     }
-//     return res.status(200).json(User);
-//   } catch (e) {
-//     res.sendStatus(400).send(e);
-//   }
-// };
+const editUser = async (req, res) => {
+  console.log(req.body);
+  try {
+    const user_id = req.params.userID;
+    const { name, phone, email, username, about } = req.body;
+    const file = req.file !== undefined ? req.file.filename : "";
+
+    const User = await userModel.findByIdAndUpdate(
+      user_id,
+      { name, email, phone, username,about, avatar:file },
+      { new: true }
+    );
+    if (!User) {
+      return res.status(400).json({ message: "User not found" , error:true});
+    }
+
+    res.json({ message: "Your profile updated successfully", error: false });
+  } catch (e) {
+    res.sendStatus(400).send(e);
+  }
+};
 
 const getCurrentUser = async (req, res) => {
   try {
     const hashID = req.params.hashID;
-    var decoded = jwt.verify(
-      hashID,
-      "397981b551eee4e01270afdaea4b4947fb1eda1517f69150200916b91fb08c0f"
-    );
+    var decoded = jwt.verify(hashID, process.env.HashID);
     console.log(decoded);
     const userId = decoded.id;
     const User = await userModel.findById(userId);
@@ -111,5 +110,5 @@ module.exports = {
   Register,
   Login,
   getCurrentUser,
-  // editUser,
+  editUser,
 };

@@ -3,12 +3,12 @@ import Home from "./pages/landingPages/Home";
 import About from "./pages/landingPages/About";
 import Contact from "./pages/landingPages/Contact";
 import Dashboard from "./pages/admin/Dashboard";
-import Feed from "./pages/investor/Feed";
-import Profile from "./pages/investor/Profile";
+import Feed from "./pages/users/Feed";
+import Profile from "./pages/users/Profile";
 import Register from "./pages/Auth/register";
 import Login from "./pages/Auth/login";
-import Notification from "./pages/investor/Notification";
-import Message from "./pages/investor/Message";
+import Notification from "./pages/users/Notification";
+import Message from "./pages/users/Message";
 
 import "./App.css";
 import { UserProvider } from "./Context/ContextProvider";

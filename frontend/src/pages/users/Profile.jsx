@@ -2,6 +2,7 @@ import { BiUser } from "react-icons/bi";
 import { BiPhone } from "react-icons/bi";
 import { BiInfoCircle } from "react-icons/bi";
 import { FaPeopleRobbery } from "react-icons/fa6";
+import { GoVerified } from "react-icons/go";
 import Footer from "../../inc/Footer";
 import LoggedInMenu from "../../inc/LoggedInMenu";
 import userImage from "../../assets/navImg/user.png";
@@ -26,12 +27,12 @@ function UserProfile() {
   const navigate = useNavigate();
   const { user, userPosts } = useContext(UserContext);
   const [cookies, setCookies] = useCookies(["token"]);
+
   if (!cookies.token) {
     navigate("/");
   }
 
   const usernameRef = useRef(null);
-
   const handleCopyUsername = () => {
     if (usernameRef.current) {
       const username = usernameRef.current.getAttribute("data-username");
@@ -78,6 +79,13 @@ function UserProfile() {
   };
 
   const [imagePreview, setImagePreview] = useState("");
+  const [newEmail, setNewEmail] = useState("");
+  const [newPhoneNumber, setPhoneNumber] = useState("");
+  const [newName, setNewName] = useState("");
+  const [newUserName, setUserName] = useState("");
+  const [about, setAbout] = useState("");
+
+  const [avatar, setAvatar] = useState(null);
 
   // Function to handle file input change and update image preview
   const handleImageChange = (event) => {
@@ -90,6 +98,48 @@ function UserProfile() {
 
     if (file) {
       reader.readAsDataURL(file);
+    }
+  };
+  console.log(user);
+  const handleEditProfile = async (e) => {
+    e.preventDefault();
+
+    try {
+      const formData = new FormData();
+      formData.append("email", newEmail);
+      formData.append("phone", newPhoneNumber);
+      formData.append("name", newName);
+      formData.append("username", newUserName);
+      formData.append("about", about);
+      if (avatar !== null) {
+        formData.append("avatar", avatar);
+      }
+
+      const config = {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${cookies.token}`,
+        },
+      };
+
+      const res = await axios.post(
+        `${baseURL}/users/edit/${user._id}`,
+        formData,
+        config
+      );
+
+      console.log("Profile updated successfully:", res.data);
+      if (res.data.error === false) {
+        Swal.fire({
+          icon: "success",
+          title: res.data.message,
+          showConfirmButton: false,
+          timer: 2000,
+        });
+      }
+    } catch (error) {
+      // Handle errors
+      console.error("Failed to update profile:", error);
     }
   };
 
@@ -109,10 +159,15 @@ function UserProfile() {
             </div>
             <div className="col-md-8 shadow p-4 p-md-5 bg-body-tertiary rounded">
               <h2>{user && user.name}</h2>
+              <p style={{ fontSize: "1rem" }}>
+                <GoVerified />
+                {"  "}
+                {user && user.role}
+              </p>
               <div className="d-flex align-items-center mb-3">
                 <BiUser className="me-2" /> {/* React Icon for user */}
                 <span ref={usernameRef} data-username="username">
-                {user && user.name}
+                  {user && user.name}
                 </span>
                 <button
                   className="btn btn-sm btn-primary ms-auto copy-username"
@@ -132,8 +187,7 @@ function UserProfile() {
               </p>
               <p>
                 <BiInfoCircle /> {/* React Icon for info */}
-                About: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                Sed quis justo sed urna volutpat tincidunt.
+                About: {user && user.about? user.about : "Lorem ipsum dolor sit amet, consectetur adipiscing elit.Sed quis justo sed urna volutpat tincidunt."}
               </p>
               <p>
                 <FaPeopleRobbery /> {/* React Icon for followers */}
@@ -164,10 +218,24 @@ function UserProfile() {
                   className="mb-3 shadow p-3 bg-body-tertiary rounded"
                 >
                   <div className="card-body">
-                    <h5 className="card-title">{post.title}</h5>
-                    <p className="card-text text-muted mt-2">
+                    <h6 className="card-title">{post.title}</h6>
+                    <p
+                      className="card-text mt-2"
+                      style={{ fontSize: "0.8rem" }}
+                    >
                       {post.description}
                     </p>
+                    <span style={{ fontSize: "0.6rem", color: "#6c757d" }}>
+                      {new Date(`${post.createdAt}`).toLocaleDateString(
+                        "en-US",
+                        {
+                          day: "numeric",
+                          month: "long",
+                          year: "numeric",
+                          ordinalDate: true,
+                        }
+                      )}
+                    </span>
                     {post.image && (
                       <div className="img-container mt-3">
                         <img
@@ -233,7 +301,10 @@ function UserProfile() {
                   className="form-control custom-input"
                   type="file"
                   id="formFile"
-                  onChange={handleImageChange}
+                  onChange={(e) => {
+                    handleImageChange(e);
+                    setAvatar(e.target.value);
+                  }}
                 />
               </div>
               {imagePreview ? (
@@ -250,7 +321,7 @@ function UserProfile() {
                   <img
                     width={150}
                     className="img-fluid rounded-circle mb-3 shadow mb-md-0 bg-body-tertiary rounded custom-image-preview"
-                    src={user}
+                    src={userImage}
                     alt="User"
                   />
                 </div>
@@ -268,7 +339,10 @@ function UserProfile() {
                     type="email"
                     className="form-control custom-input"
                     id="exampleFormControlInput1"
-                    placeholder="name@example.com"
+                    placeholder={user && user.email}
+                    onChange={(e) => {
+                      setNewEmail(e.target.value);
+                    }}
                   />
                 </div>
                 <div className="mb-3">
@@ -283,6 +357,9 @@ function UserProfile() {
                     className="form-control custom-input"
                     id="exampleFormControlInput1"
                     placeholder="Phone number"
+                    onChange={(e) => {
+                      setPhoneNumber(e.target.value);
+                    }}
                   />
                 </div>
                 <div className="mb-3">
@@ -297,6 +374,9 @@ function UserProfile() {
                     className="form-control custom-input"
                     id="exampleFormControlInput1"
                     placeholder="First Name"
+                    onChange={(e) => {
+                      setNewName(e.target.value);
+                    }}
                   />
                 </div>
 
@@ -312,6 +392,26 @@ function UserProfile() {
                     className="form-control custom-input"
                     id="exampleFormControlInput1"
                     placeholder="Username"
+                    onChange={(e) => {
+                      setUserName(e.target.value);
+                    }}
+                  />
+                </div>
+                <div className="mb-3">
+                  <label
+                    htmlFor="exampleFormControlInput1"
+                    className="form-label custom-label"
+                  >
+                    About
+                  </label>
+                  <textarea
+                    className="form-control"
+                    id="exampleFormControlTextarea1"
+                    rows={3}
+                    // defaultValue={user &&  user.about}
+                    onChange={(e) => {
+                      setAbout(e.target.value);
+                    }}
                   />
                 </div>
               </div>
@@ -319,14 +419,15 @@ function UserProfile() {
             <div className="modal-footer custom-modal-footer">
               <button
                 type="button"
-                className="btn btn-secondary custom-btn-secondary"
+                className="btn btn-danger custom-btn-secondary"
                 data-bs-dismiss="modal"
               >
-                Close
+                Cancel
               </button>
               <button
                 type="button"
                 className="btn btn-primary custom-btn-primary"
+                onClick={handleEditProfile}
               >
                 Save changes
               </button>
@@ -334,7 +435,6 @@ function UserProfile() {
           </div>
         </div>
       </div>
-
       <Footer />
     </>
   );

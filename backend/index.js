@@ -11,11 +11,6 @@ app.use(cors());
 
 app.use(bodyParser.json());
 
-// const __filename = fileURLToPath(import.meta.url);
-// const __dirname = path.dirname(__filename);
-
-// console.log("directory-name 👉️", __dirname);
-
 const path = require('path');
 app.use(
   "/post-images",
@@ -28,9 +23,6 @@ console.log("");
 
 require('dotenv').config();
 mongoose
-  // .connect(
-  //   "mongodb+srv://piupranati:l4q6zImt8q8Zbp4V@db1.yhukbpb.mongodb.net/?retryWrites=true&w=majority&appName=DB1"
-  // )
   .connect(
     process.env.mongo_URI
   )

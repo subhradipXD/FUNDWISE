@@ -168,8 +168,8 @@ function Feed() {
                     className="mb-1 shadow p-3 bg-body-tertiary rounded"
                   >
                     <div className="card-body">
-                      <h5 className="card-title">{post.title}</h5>
-                      <p className="card-text text-muted mt-2">
+                      <h6 className="card-title">{post.title}</h6>
+                      <p className="card-text mt-2" style={{ fontSize: "0.8rem" }}>
                         {post.description}
                       </p>
                       <span style={{ fontSize: "0.8rem", color: "#6c757d" }}>
