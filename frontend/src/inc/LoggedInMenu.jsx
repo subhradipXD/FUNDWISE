@@ -1,13 +1,14 @@
+import { IoHomeOutline } from "react-icons/io5";
+import { IoChatbubblesOutline } from "react-icons/io5";
+import { IoNotificationsOutline } from "react-icons/io5";
+import { CgProfile } from "react-icons/cg";
+import { IoLogOutOutline } from "react-icons/io5";
+
 import CustomCSS from "../custom.module.css";
-import chat from "../assets/navImg/chat.png";
-import notification from "../assets/navImg/notification-bell.png";
 import mode from "../assets/day-and-night.png";
 import light from "../assets/day-mode.png";
 import dark from "../assets/night-mode.png";
 import auto from "../assets/theme.png";
-import profile from "../assets/navImg/user.png";
-import home from "../assets/navImg/home-button.png";
-import logOut from "../assets/navImg/turn-off.png";
 import { NavLink, useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { useCookies } from "react-cookie";
@@ -100,60 +101,36 @@ function LoggedInMenu() {
               <li className="nav-item">
                 <a className="nav-link" aria-current="page" href="#">
                   {/* <Link to="/feed" style={{ textDecoration: "none" }}> */}
-                    <img
-                      src={home}
-                      width={19}
-                      alt="Home"
-                      onClick={handleFeed}
-                    />
+                  <IoHomeOutline onClick={handleFeed} />
                   {/* </Link> */}
                 </a>
               </li>
               <li className="nav-item">
                 <a className="nav-link" href="#">
                   {/* <Link to="/message" style={{ textDecoration: "none" }}> */}
-                    <img
-                      src={chat}
-                      width={19}
-                      alt="Messages"
-                      onClick={handleMessage}
-                    />
+                  <IoChatbubblesOutline onClick={handleMessage} />
                   {/* </Link> */}
                 </a>
               </li>
               <li className="nav-item">
                 <a className="nav-link" href="#">
                   {/* <Link to="/notification" style={{ textDecoration: "none" }}> */}
-                    <img
-                      src={notification}
-                      width={19}
-                      alt="Notifications"
-                      onClick={handleNotification}
-                    />
+                  <IoNotificationsOutline onClick={handleNotification} />
                   {/* </Link> */}
                 </a>
               </li>
-
               <li className="nav-item">
                 <a className="nav-link" href="#">
                   <Link to="/profile" style={{ textDecoration: "none" }}>
-                    <img
-                      src={profile}
-                      width={19}
-                      alt="Profile"
-                      onClick={handleProfile}
-                    />
+                    <CgProfile onClick={handleProfile} />
                   </Link>
                 </a>
               </li>
-
               <li>
                 <a className="nav-link" href="#">
-                  <img
-                    src={logOut}
-                    width={17}
-                    alt="Post"
-                    onClick={handleLogout}
+                  <IoLogOutOutline
+                    data-bs-toggle="modal"
+                    data-bs-target="#exampleModal"
                   />
                 </a>
               </li>
@@ -161,6 +138,48 @@ function LoggedInMenu() {
           </div>
         </div>
       </nav>
+
+      <div>
+        <div
+          className="modal fade"
+          id="exampleModal"
+          tabIndex={-1}
+          aria-labelledby="exampleModalLabel"
+          aria-hidden="true"
+        >
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h1 className="modal-title fs-5" id="exampleModalLabel">
+                  Sure want to Log Out?
+                </h1>
+                <button
+                  type="button"
+                  className="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                />
+              </div>
+              <div className="modal-footer">
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  data-bs-dismiss="modal"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-danger"
+                  onClick={handleLogout}
+                >
+                  LogOut
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </>
   );
 }
