@@ -197,27 +197,17 @@ function Feed() {
                           />
                         </div>
                       )}
-                      <div className="d-flex justify-content-between mt-5">
-                        <button
-                          className="btn btn-outline-danger"
-                          style={{ fontSize: "15px" }}
-                        >
-                          <CiHeart style={{ fontSize: "20px" }} /> like
-                        </button>
-                        <button
-                          className="btn btn-outline-primary"
-                          style={{ fontSize: "15px" }}
-                        >
-                          <FaRegCommentDots style={{ fontSize: "20px" }} />{" "}
-                          Comment
-                        </button>
-                        <button
-                          className="btn btn-outline-success"
-                          style={{ fontSize: "15px" }}
-                        >
-                          <MdHandshake style={{ fontSize: "20px" }} />{" "}
-                          Interested
-                        </button>
+                      <div className="d-flex justify-content-around mt-5">
+                        <span className="btn" style={{ color: "red" }}>
+                          <CiHeart style={{ fontSize: "20px", color: "red" }} />{" "}
+                          Like{" "}
+                        </span>
+                        <span className="btn" style={{ color: "green" }}>
+                          <MdHandshake
+                            style={{ fontSize: "20px", color: "green" }}
+                          />{" "}
+                          Interested{" "}
+                        </span>
                       </div>
                     </div>
                   </li>
