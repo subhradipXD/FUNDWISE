@@ -55,6 +55,8 @@ function DashboardMain() {
     try {
       const res = await axios.get(`${baseURL}/admin/`);
       const users = res.data;
+      const usersByRole = countUsersByRole(users);
+      setUserCounts(usersByRole);
       const founderUsers = users.filter((user) => user.role === "Founder");
       const investorUsers = users.filter((user) => user.role === "Investor");
       setFounders(founderUsers);

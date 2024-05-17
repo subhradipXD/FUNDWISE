@@ -1,9 +1,7 @@
 const postModel = require("../models/postModel");
 const userModel = require("../models/userModel");
 const jwt = require("jsonwebtoken");
-console.log(userModel);
 require('dotenv').config();
-console.log(process.env.HashID)
 
 const Username = async (req, res) => {
   const { username } = req.body;
@@ -18,7 +16,7 @@ const Username = async (req, res) => {
 
 const Register = async (req, res) => {
   try {
-    const { name, phone, email, password, role } = req.body; //destructure
+    const { name, phone, email, password, role, username } = req.body; //destructure
 
     const user = await userModel.findOne({ email });
     console.log(req.body);
@@ -35,6 +33,7 @@ const Register = async (req, res) => {
       email,
       password,
       role,
+      username
     });
 
     await newUser.save();
@@ -77,11 +76,13 @@ const editUser = async (req, res) => {
   try {
     const user_id = req.params.userID;
     const { name, phone, email, username, about } = req.body;
-    const file = req.file !== undefined ? req.file.filename : "";
+    // const file = req.file !== undefined ? req.file.filename : "";
 
     const User = await userModel.findByIdAndUpdate(
       user_id,
-      { name, email, phone, username,about, avatar:file },
+      { name, email, phone, username,about, 
+        // avatar:file 
+      },
       { new: true }
     );
     if (!User) {
@@ -118,10 +119,61 @@ const getCurrentUser = async (req, res) => {
   }
 };
 
+
+const path = require("path");
+
+const editAvatar = async (req, res) => {
+  try {
+    const userId = req.params.userID;
+    const user = await userModel.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ error: true, message: "User not found" });
+    }
+
+    // Handle avatar upload
+    if (req.file) {
+      // Delete the previous avatar if it exists
+      if (user.avatar) {
+        const oldAvatarPath = path.join(
+          __dirname,
+          "../public/uploads/users/",
+          user.avatar
+        );
+        fs.unlink(oldAvatarPath, (err) => {
+          if (err) {
+            console.error(err);
+          }
+        });
+      }
+
+      // Save the new avatar
+      user.avatar = req.file.filename;
+    } else {
+      return res
+        .status(400)
+        .json({ error: true, message: "No file provided" });
+    }
+
+    // Save the updated user
+    const updatedUser = await user.save();
+
+    res.status(200).json({
+      error: false,
+      message: "Avatar updated successfully",
+      response: updatedUser,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: true, message: "Server error" });
+  }
+};
+
 module.exports = {
   Username,
   Register,
   Login,
   getCurrentUser,
   editUser,
+  editAvatar,
 };
