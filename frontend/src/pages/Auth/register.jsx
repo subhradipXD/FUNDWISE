@@ -9,18 +9,72 @@ import swal from "sweetalert2";
 
 function Register() {
   const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
+
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [role, setRole] = useState("");
   const navigate = useNavigate();
+
+  const handleUsername = async (e) => {
+    e.preventDefault();
+    const usernameInput = e.target.value.trim();
+    const usernameSpan = document.getElementById("username");
+
+    // Clear the previous message
+    usernameSpan.innerHTML = "";
+    usernameSpan.style.color = ""; // Reset the color
+
+    // Check if the username length is more than 5
+    if (usernameInput.length <= 5) {
+      usernameSpan.innerHTML = "Username must be at least 6 characters long";
+      usernameSpan.style.color = "red"; // Set text color to red
+      return; // Exit the function
+    }
+
+    try {
+      const res = await axios.post("http://localhost:2000/users/username", {
+        username: usernameInput,
+      });
+      console.log(res);
+      if (!res.data.error) {
+        usernameSpan.innerHTML = res.data.message;
+        usernameSpan.style.color = "green"; // Set text color to green
+      } else {
+        usernameSpan.innerHTML = res.data.message;
+        usernameSpan.style.color = "red"; // Set text color to red
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handlePasswordValidation = (e) => {
+    const passwordInput = e.target.value;
+    const passwordSpan = document.getElementById("password");
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
+
+    // Clear the previous message
+    passwordSpan.innerHTML = "";
+    passwordSpan.style.color = "";
+
+    // Check if the password meets the requirements
+    if (!passwordRegex.test(passwordInput)) {
+      passwordSpan.innerHTML =
+        "Password must be at least 6 characters long and contain at least one uppercase, one lowercase, one numeric, and one special character";
+      passwordSpan.style.color = "red";
+    }
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
       const res = await axios.post("http://localhost:2000/users/register", {
         name,
+        username,
         phone,
         email,
         password,
@@ -100,6 +154,26 @@ function Register() {
                   required
                   onChange={(e) => setName(e.target.value)}
                 />
+                <label htmlFor="validationDefault01" className="form-label">
+                  Username
+                </label>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="validationDefault01"
+                  placeholder="Name..."
+                  value={username}
+                  required
+                  onChange={(e) => {
+                    setUsername(e.target.value);
+                    handleUsername(e);
+                  }}
+                />
+                <span>
+                  <small id="username"> </small>
+                </span>
+                <br />
+
                 <label htmlFor="validationDefault04" className="form-label">
                   Phone Number
                 </label>
@@ -157,18 +231,21 @@ function Register() {
                   </div>
                 </div>
 
-                <label htmlFor="validationDefault05" className="form-label">
-                  Password
-                </label>
                 <input
                   type="password"
                   className="form-control"
                   id="validationDefault05"
                   placeholder="Password@123..."
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    handlePasswordValidation(e);
+                  }}
                   required
                 />
+                <span>
+                  <small id="password"></small>
+                </span>
                 <label htmlFor="validationDefault05" className="form-label">
                   Confirm Password
                 </label>

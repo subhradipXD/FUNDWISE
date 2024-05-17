@@ -4,6 +4,18 @@ const jwt = require("jsonwebtoken");
 console.log(userModel);
 require('dotenv').config();
 console.log(process.env.HashID)
+
+const Username = async (req, res) => {
+  const { username } = req.body;
+  const user = await userModel.findOne({ username });
+  console.log(user);
+  if (!user) {
+    return res.json({ error: false, message: "Valid Username!" });
+  }else{
+    return res.json({ error: true, message: "Username Already Exist!" });
+  }
+};
+
 const Register = async (req, res) => {
   try {
     const { name, phone, email, password, role } = req.body; //destructure
@@ -107,6 +119,7 @@ const getCurrentUser = async (req, res) => {
 };
 
 module.exports = {
+  Username,
   Register,
   Login,
   getCurrentUser,

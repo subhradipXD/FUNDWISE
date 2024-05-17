@@ -1,11 +1,13 @@
 const express = require("express");
-const { Login, Register, getCurrentUser, editUser } = require("../controllers/userController.js");
+const { Login, Register, getCurrentUser, editUser, Username } = require("../controllers/userController.js");
 const router = express.Router();
 const multer = require("multer");
 const path = require("path");
 
 router.post("/login", Login);
 router.post("/register", Register);
+router.post("/username", Username);
+
 router.get("/currentuser/:hashID", getCurrentUser);
 
 const storageEngine = multer.diskStorage({
