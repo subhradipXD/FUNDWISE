@@ -20,6 +20,7 @@ app.use(
 );app.use(require("express").json());
 app.use("/users", userRouter);
 app.use("/post", postRouter);
+console.log(adminRouter);
 app.use("/admin", adminRouter);
 
 mongoose
