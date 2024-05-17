@@ -1,5 +1,22 @@
 import FeatherIcon from 'feather-icons-react';
+import axios from 'axios';
+
 function DashboardMain() {
+  const baseURL = "http://localhost:2000";
+  const getUsers = async () => {
+    try {
+      const res = await axios.get(${baseURL}/admin/);
+      // const sortedPosts = res.data.sort(
+      //   (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
+      // );
+      // setPosts(sortedPosts.reverse());
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  useEffect(() => {
+    getUsers();
+  }, []);
     return(
         <><main className="main users chart-page" id="skip-target">
         <div className="container">
@@ -12,7 +29,7 @@ function DashboardMain() {
                 </div>
                 <div className="stat-cards-info">
                   <p className="stat-cards-info__num">1478 286</p>
-                  <p className="stat-cards-info__title">Total visits</p>
+                  <p className="stat-cards-info__title">Total Investor</p>
                   <p className="stat-cards-info__progress">
                     <span className="stat-cards-info__profit success">
                       <FeatherIcon icon="trending-up" />
@@ -23,24 +40,7 @@ function DashboardMain() {
                 </div>
               </article>
             </div>
-            <div className="col-md-6 col-xl-3">
-              <article className="stat-cards-item">
-                <div className="stat-cards-icon warning">
-                  <FeatherIcon icon="file" />
-                </div>
-                <div className="stat-cards-info">
-                  <p className="stat-cards-info__num">1478 286</p>
-                  <p className="stat-cards-info__title">Total visits</p>
-                  <p className="stat-cards-info__progress">
-                    <span className="stat-cards-info__profit success">
-                      <FeatherIcon icon="trending-up" />
-                      0.24%
-                    </span>
-                    Last month
-                  </p>
-                </div>
-              </article>
-            </div>
+            
             <div className="col-md-6 col-xl-3">
               <article className="stat-cards-item">
                 <div className="stat-cards-icon purple">
@@ -48,7 +48,7 @@ function DashboardMain() {
                 </div>
                 <div className="stat-cards-info">
                   <p className="stat-cards-info__num">1478 286</p>
-                  <p className="stat-cards-info__title">Total visits</p>
+                  <p className="stat-cards-info__title">Total Founder</p>
                   <p className="stat-cards-info__progress">
                     <span className="stat-cards-info__profit danger">
                     <FeatherIcon icon="trending-down" />
@@ -66,7 +66,7 @@ function DashboardMain() {
                 </div>
                 <div className="stat-cards-info">
                   <p className="stat-cards-info__num">1478 286</p>
-                  <p className="stat-cards-info__title">Total visits</p>
+                  <p className="stat-cards-info__title">Team</p>
                   <p className="stat-cards-info__progress">
                     <span className="stat-cards-info__profit warning">
                       <FeatherIcon icon="trending-up" />
