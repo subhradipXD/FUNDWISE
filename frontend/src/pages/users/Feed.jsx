@@ -1,7 +1,6 @@
 import LoggedInMenu from "../../inc/LoggedInMenu";
 import addPost from "../../assets/feed/addPost.png";
 import { CiHeart } from "react-icons/ci";
-import { FaRegCommentDots } from "react-icons/fa";
 import { MdHandshake } from "react-icons/md";
 import { IoSearchOutline } from "react-icons/io5";
 import { useState, useEffect, useContext } from "react";
