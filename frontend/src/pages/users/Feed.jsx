@@ -163,7 +163,9 @@ function Feed() {
             <div className="col-md-1"></div>
             <div className="col-md-8">
               <ul className="list-unstyled">
-                {posts.map((post) => (
+                {posts
+                
+                .map((post) => (
                   <li
                     key={post._id}
                     className="mb-1 shadow p-3 bg-body-tertiary rounded"

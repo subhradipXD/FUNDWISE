@@ -215,20 +215,20 @@ function UserProfile() {
               .
               map((post) => (
                 <li
-                  key={post._id}
+                  key={post && post._id}
                   className="mb-3 shadow p-3 bg-body-tertiary rounded"
                 >
                   <div className="card-body">
-                    <h6 className="card-title">{post.title}</h6>
+                    <h6 className="card-title">{post && post.title}</h6>
                     <p
                       className="card-text mt-2"
                       style={{ fontSize: "0.8rem" }}
                     >
-                      {post.description}
+                      {post && post.description}
                     </p>
                     <span style={{ fontSize: "0.8rem", color: "#6c757d" }}>
                       <small>
-                        {new Date(`${post.createdAt}`).toLocaleDateString(
+                        {new Date(`${post && post.createdAt}`).toLocaleDateString(
                           "en-US",
                           {
                             day: "numeric",
@@ -239,10 +239,10 @@ function UserProfile() {
                         )}
                       </small>
                     </span>
-                    {post.image && (
+                    {post && post.image && (
                       <div className="img-container mt-3">
                         <img
-                          src={`${baseURL}/post-images/${post.image}`}
+                          src={`${baseURL}/post-images/${post && post.image}`}
                           className="img-fluid"
                           alt="Post"
                         />

@@ -4,6 +4,7 @@ const bodyParser = require("body-parser");
 const userRouter = require("./routes/userRoute.js");
 const postRouter = require("./routes/postRoute.js");
 const mongoose = require("mongoose");
+require('dotenv').config();
 
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -19,9 +20,7 @@ app.use(
 app.use("/users", userRouter);
 app.use("/post", postRouter);
 
-console.log("");
 
-require('dotenv').config();
 mongoose
   .connect(
     process.env.mongo_URI
