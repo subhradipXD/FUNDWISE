@@ -1,14 +1,14 @@
 import { IoHomeOutline } from "react-icons/io5";
-import { IoChatbubblesOutline } from "react-icons/io5";
-import { IoNotificationsOutline } from "react-icons/io5";
+// import { IoChatbubblesOutline } from "react-icons/io5";
+// import { IoNotificationsOutline } from "react-icons/io5";
 import { CgProfile } from "react-icons/cg";
 import { IoLogOutOutline } from "react-icons/io5";
 
 import CustomCSS from "../custom.module.css";
-import mode from "../assets/day-and-night.png";
-import light from "../assets/day-mode.png";
-import dark from "../assets/night-mode.png";
-import auto from "../assets/theme.png";
+// import mode from "../assets/day-and-night.png";
+// import light from "../assets/day-mode.png";
+// import dark from "../assets/night-mode.png";
+// import auto from "../assets/theme.png";
 import { NavLink, useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { useCookies } from "react-cookie";
@@ -62,7 +62,7 @@ function LoggedInMenu() {
           </button>
           <div className="collapse navbar-collapse" id="navbarTogglerDemo02">
             <ul className="navbar-nav ms-auto mb-2 mb-lg-0 nav nav-underline">
-              <li className="nav-item dropdown">
+              {/* <li className="nav-item dropdown">
                 <a
                   className="nav-link dropdown-toggle"
                   to="/"
@@ -97,7 +97,7 @@ function LoggedInMenu() {
                     </a>
                   </li>
                 </ul>
-              </li>
+              </li> */}
               <li className="nav-item">
                 <a className="nav-link" aria-current="page" href="#">
                   {/* <Link to="/feed" style={{ textDecoration: "none" }}> */}
@@ -105,20 +105,20 @@ function LoggedInMenu() {
                   {/* </Link> */}
                 </a>
               </li>
-              <li className="nav-item">
-                <a className="nav-link" href="#">
+              {/* <li className="nav-item"> */}
+                {/* <a className="nav-link" href="#"> */}
                   {/* <Link to="/message" style={{ textDecoration: "none" }}> */}
-                  <IoChatbubblesOutline onClick={handleMessage} />
+                  {/* <IoChatbubblesOutline onClick={handleMessage} /> */}
                   {/* </Link> */}
-                </a>
-              </li>
-              <li className="nav-item">
-                <a className="nav-link" href="#">
+                {/* </a> */}
+              {/* </li> */}
+              {/* <li className="nav-item"> */}
+                {/* <a className="nav-link" href="#"> */}
                   {/* <Link to="/notification" style={{ textDecoration: "none" }}> */}
-                  <IoNotificationsOutline onClick={handleNotification} />
+                  {/* <IoNotificationsOutline onClick={handleNotification} /> */}
                   {/* </Link> */}
-                </a>
-              </li>
+                {/* </a> */}
+              {/* </li> */}
               <li className="nav-item">
                 <a className="nav-link" href="#">
                   <Link to="/profile" style={{ textDecoration: "none" }}>

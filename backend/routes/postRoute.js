@@ -1,6 +1,6 @@
 const express = require("express");
 const multer = require("multer");
-const { feed, showposts } = require("../controllers/postController.js");
+const { feed, showposts, deletePost } = require("../controllers/postController.js");
 const router = express.Router();
 const path = require("path");
 
@@ -32,5 +32,7 @@ const upload = multer({
   fileFilter,
 });
 router.post("/feed", upload.single("image"), feed);
+
+router.delete("/:postID" , deletePost);
 
 module.exports = router;

@@ -35,7 +35,36 @@ const showposts = async (req, res) => {
   }
 };
 
+
+const deletePost = async (req, res) => {
+  const { postID } = req.params;
+
+  try {
+    // Find the post by ID and delete it
+    const post = await postModel.findByIdAndDelete(postID);
+
+    if (!post) {
+      return res.status(404).json({
+        error: true,
+        message: 'Post not found',
+      });
+    }
+
+    return res.status(200).json({
+      error: false,
+      message: 'Post deleted successfully',
+    });
+  } catch (error) {
+    console.error('Failed to delete post:', error);
+    return res.status(500).json({
+      error: true,
+      message: 'An error occurred while deleting the post',
+    });
+  }
+};
+
 module.exports = {
   feed,
   showposts,
+  deletePost
 };

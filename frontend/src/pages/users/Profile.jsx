@@ -1,18 +1,14 @@
-import { BiUser } from "react-icons/bi";
-import { BiPhone } from "react-icons/bi";
-import { BiInfoCircle } from "react-icons/bi";
+import React from 'react';
+import { BiUser, BiPhone, BiInfoCircle } from "react-icons/bi";
 import { GoVerified } from "react-icons/go";
 import Footer from "../../inc/Footer";
 import LoggedInMenu from "../../inc/LoggedInMenu";
 import userImage from "../../assets/navImg/user.png";
-
-import { CiHeart } from "react-icons/ci";
+import { CiMenuKebab, CiHeart } from "react-icons/ci";
 import { MdAlternateEmail } from "react-icons/md";
-
 import Swal from "sweetalert2";
 import { useCookies } from "react-cookie";
 import { useNavigate } from "react-router-dom";
-
 import { useRef, useEffect, useState, useContext } from "react";
 import ClipboardJS from "clipboard";
 import axios from "axios";
@@ -21,7 +17,8 @@ import { UserContext } from "../../Context/ContextProvider";
 function UserProfile() {
   const baseURL = "http://localhost:2000";
   const navigate = useNavigate();
-  const { user, setUser, userPosts } = useContext(UserContext);
+  const { user, setUser, userPosts, setUserPosts } = useContext(UserContext);
+  console.log(userPosts);
   const [cookies, setCookies] = useCookies(["token"]);
 
   if (!cookies.token) {
@@ -94,7 +91,8 @@ function UserProfile() {
       console.log(formData);
       const res = await axios.post(
         `${baseURL}/users/edit/${user._id}`,
-        formData
+        formData,
+        { headers: { "Content-Type": "multipart/form-data" } }
       );
 
       console.log("Profile updated successfully:", res.data);
@@ -146,6 +144,34 @@ function UserProfile() {
     } catch (error) {
       // Handle errors
       console.error("Failed to update profile picture:", error);
+    }
+  };
+
+  const deletePost = async (postID, userID) => {
+    try {
+      const res = await axios.delete(`${baseURL}/post/${postID}`, {
+        headers: {
+          Authorization: `Bearer ${cookies.token}`,
+        },
+      });
+
+      if (res.data.error === false) {
+        Swal.fire({
+          icon: "success",
+          title: res.data.message,
+          showConfirmButton: false,
+          timer: 2000,
+        });
+        // Remove the deleted post from the userPosts state
+        setUserPosts((prevPosts) => prevPosts.filter(post => post._id !== postID));
+      }
+    } catch (error) {
+      console.error("Failed to delete post:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Failed to delete post",
+        text: error.response ? error.response.data.message : "Something went wrong",
+      });
     }
   };
 
@@ -228,7 +254,42 @@ function UserProfile() {
                     className="mb-3 shadow p-3 bg-body-tertiary rounded"
                   >
                     <div className="card-body">
-                      <h6 className="card-title">{post && post.title}</h6>
+                      <div className="d-flex justify-content-between">
+                        <h6 className="card-title">{post && post.title}</h6>
+                        <div className="dropdown">
+                          <button
+                            className="btn btn-secondary dropdown-toggle"
+                            type="button"
+                            id="dropdownMenuButton"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false"
+                          >
+                            <CiMenuKebab />
+                          </button>
+                          <ul
+                            className="dropdown-menu"
+                            aria-labelledby="dropdownMenuButton"
+                          >
+                            <li>
+                              <button
+                                className="dropdown-item"
+                                style={{
+                                  backgroundColor: "red",
+                                  color: "white",
+                                }}
+                                onClick={() => { deletePost(post._id, user._id) }}
+                              >
+                                Delete
+                              </button>
+                            </li>
+                            <li>
+                              <a className="dropdown-item" href="#">
+                                Edit
+                              </a>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
                       <p
                         className="card-text mt-2"
                         style={{ fontSize: "0.8rem" }}
