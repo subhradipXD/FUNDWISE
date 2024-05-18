@@ -7,7 +7,6 @@ import LoggedInMenu from "../../inc/LoggedInMenu";
 import userImage from "../../assets/navImg/user.png";
 
 import { CiHeart } from "react-icons/ci";
-import { MdHandshake } from "react-icons/md";
 import { MdAlternateEmail } from "react-icons/md";
 
 import Swal from "sweetalert2";
@@ -28,7 +27,6 @@ function UserProfile() {
   if (!cookies.token) {
     navigate("/");
   }
-  
 
   const usernameRef = useRef(null);
 
@@ -91,9 +89,8 @@ function UserProfile() {
       formData.append("email", newEmail);
       formData.append("phone", newPhoneNumber);
       formData.append("name", newName);
-      formData.append("username", newUserName);
       formData.append("about", about);
-     
+
       const config = {
         headers: {
           "Content-Type": "multipart/form-data",
@@ -129,20 +126,20 @@ function UserProfile() {
       if (avatar !== null) {
         formData.append("avatar", avatar);
       }
-  
+
       const config = {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${cookies.token}`,
         },
       };
-  
+
       const res = await axios.post(
         `${baseURL}/users/edit-avatar/${user._id}`,
         formData,
         config
       );
-  
+
       console.log("Profile picture updated successfully:", res.data);
       if (res.data.error === false) {
         Swal.fire({
@@ -189,11 +186,11 @@ function UserProfile() {
 
               <p>
                 <MdAlternateEmail /> {/* React Icon for phone */}
-                Email ID: <span>{user && user.email}</span>
+                <span>{user && user.email}</span>
               </p>
               <p>
                 <BiPhone /> {/* React Icon for phone */}
-                Phone Number: <span>{user && user.phone}</span>
+                <span>{user && user.phone}</span>
               </p>
               <p>
                 <BiInfoCircle /> {/* React Icon for info */}
@@ -225,11 +222,11 @@ function UserProfile() {
             </div>
           </div>
         </div>
-
-        <div className="row mt-4">
-          <div className="col-md-6">
-            <h3>Your Timeline Posts</h3>
-            <ul className="list-unstyled">
+        <hr />
+        <div className="container">
+          <div className="d-flex justify-content-center flex-column">
+            <h3 className="d-flex justify-content-center">Your Posts</h3>
+            <ul className="list-unstyled ">
               {userPosts
                 .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
                 .map((post) => (
@@ -267,22 +264,16 @@ function UserProfile() {
                         </div>
                       )}
 
-                      <div className="d-flex justify-content-between mt-3">
-                        <button className="btn btn-outline-danger">
-                          <CiHeart /> Like
-                        </button>
-
-                        <button className="btn btn-outline-success">
-                          <MdHandshake /> Interested
-                        </button>
+                      <div className="d-flex justify-content-around mt-5">
+                        <span className="btn" style={{ color: "red" }}>
+                          <CiHeart style={{ fontSize: "20px", color: "red" }} />{" "}
+                          Like{" "}
+                        </span>
                       </div>
                     </div>
                   </li>
                 ))}
             </ul>
-          </div>
-          <div className="col-md-6">
-            <h3>Your Business Posts</h3>
           </div>
         </div>
       </div>
@@ -328,6 +319,7 @@ function UserProfile() {
                     onChange={(e) => {
                       setNewEmail(e.target.value);
                     }}
+                    required
                   />
                 </div>
                 <div className="mb-3">
@@ -346,6 +338,7 @@ function UserProfile() {
                     onChange={(e) => {
                       setPhoneNumber(e.target.value);
                     }}
+                    required
                   />
                 </div>
                 <div className="mb-3">
@@ -364,27 +357,10 @@ function UserProfile() {
                     onChange={(e) => {
                       setNewName(e.target.value);
                     }}
+                    required
                   />
                 </div>
 
-                <div className="mb-3">
-                  <label
-                    htmlFor="exampleFormControlInput1"
-                    className="form-label custom-label"
-                  >
-                    Username
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control custom-input"
-                    id="exampleFormControlInput1"
-                    placeholder="Username"
-                    value={newUserName}
-                    onChange={(e) => {
-                      setUserName(e.target.value);
-                    }}
-                  />
-                </div>
                 <div className="mb-3">
                   <label
                     htmlFor="exampleFormControlInput1"
@@ -401,6 +377,7 @@ function UserProfile() {
                     onChange={(e) => {
                       setAbout(e.target.value);
                     }}
+                    required
                   />
                 </div>
               </div>

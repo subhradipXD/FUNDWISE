@@ -2,7 +2,6 @@ import LoggedInMenu from "../../inc/LoggedInMenu";
 import addPost from "../../assets/feed/addPost.png";
 import { CiHeart } from "react-icons/ci";
 import { MdHandshake } from "react-icons/md";
-import { IoSearchOutline } from "react-icons/io5";
 import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
@@ -21,7 +20,7 @@ function Feed() {
   const navigate = useNavigate();
   const [cookies, setCookies] = useCookies(["token"]);
   const { user, userPosts, setUserPosts } = useContext(UserContext);
-
+  const [searchQuery, setSearchQuery] = useState("");
   if (!cookies.token) {
     navigate("/");
   }
@@ -68,15 +67,19 @@ function Feed() {
       const sortedPosts = res.data.sort(
         (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
       );
-      setPosts(sortedPosts.reverse());
+      const filteredPosts = sortedPosts.filter(
+        (post) =>
+          post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          post.description.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setPosts(filteredPosts.reverse());
     } catch (err) {
       console.log(err);
     }
   };
   useEffect(() => {
     getPosts();
-  }, []);
-
+  }, [searchQuery]);
   return (
     <>
       <LoggedInMenu />
@@ -106,116 +109,78 @@ function Feed() {
             </div>
           </div>
 
-          <div className="row mt-0">
-            <div className="col-md-4 my-2">
-              <form>
-                <div className="dropdown">
-                  <button
-                    className="btn btn-primary dropdown-toggle"
-                    type="button"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false"
-                  >
-                    Category
-                  </button>
-                  <ul className="dropdown-menu dropdown-menu-dark">
-                    <li>
-                      <a className="dropdown-item" href="#">
-                        Action
-                      </a>
+          <div className="row mt-2">
+            <div className="col-md-8">
+              {posts.length === 0 ? (
+                <div>No posts found for the search query "{searchQuery}"</div>
+              ) : (
+                <ul className="list-unstyled">
+                  {posts.map((post) => (
+                    <li
+                      key={post._id}
+                      className="mb-1 shadow p-3 bg-body-tertiary rounded"
+                    >
+                      <div className="card-body">
+                        <h6 className="card-title">{post.title}</h6>
+                        <p
+                          className="card-text mt-2"
+                          style={{ fontSize: "0.8rem" }}
+                        >
+                          {post.description}
+                        </p>
+                        <span style={{ fontSize: "0.8rem", color: "#6c757d" }}>
+                          <small>
+                            {new Date(`${post.createdAt}`).toLocaleDateString(
+                              "en-US",
+                              {
+                                day: "numeric",
+                                month: "long",
+                                year: "numeric",
+                                ordinalDate: true,
+                              }
+                            )}
+                          </small>
+                        </span>
+                        {post.image && (
+                          <div className="img-container mt-3">
+                            <img
+                              src={`${baseURL}/post-images/${post.image}`}
+                              width={"500"}
+                            />
+                          </div>
+                        )}
+                        <div className="d-flex justify-content-around mt-5">
+                          <span className="btn" style={{ color: "red" }}>
+                            <CiHeart
+                              style={{ fontSize: "20px", color: "red" }}
+                            />{" "}
+                            Like{" "}
+                          </span>
+                          <span className="btn" style={{ color: "green" }}>
+                            <MdHandshake
+                              style={{ fontSize: "20px", color: "green" }}
+                            />{" "}
+                            Interested{" "}
+                          </span>
+                        </div>
+                      </div>
                     </li>
-                    <li>
-                      <a className="dropdown-item" href="#">
-                        Another action
-                      </a>
-                    </li>
-                    <li>
-                      <a className="dropdown-item" href="#">
-                        Something else here
-                      </a>
-                    </li>
-                    <li>
-                      <a className="dropdown-item" href="#">
-                        Separated link
-                      </a>
-                    </li>
-                  </ul>
-                </div>
-              </form>
+                  ))}
+                </ul>
+              )}
             </div>
-            <div className="col-md-4 my-2"></div>
-            <div className="col-md-4 my-2">
+            <div className="col-md-4">
               <form className="d-flex" role="search">
                 <input
-                  className="form-control me-2"
+                  className="form-control me-1"
                   type="search"
                   placeholder="Search By #Tags . . ."
                   aria-label="Search"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                 />
-                <button className="btn btn-outline-primary" type="submit">
-                  <IoSearchOutline style={{ fontSize: "20px" }} />
-                </button>
               </form>
             </div>
-          </div>
-          <div className="row mt-2">
-            <div className="col-md-1"></div>
-            <div className="col-md-8">
-              <ul className="list-unstyled">
-                {posts
-                
-                .map((post) => (
-                  <li
-                    key={post._id}
-                    className="mb-1 shadow p-3 bg-body-tertiary rounded"
-                  >
-                    <div className="card-body">
-                      <h6 className="card-title">{post.title}</h6>
-                      <p
-                        className="card-text mt-2"
-                        style={{ fontSize: "0.8rem" }}
-                      >
-                        {post.description}
-                      </p>
-                      <span style={{ fontSize: "0.8rem", color: "#6c757d" }}>
-                        <small>
-                          {new Date(`${post.createdAt}`).toLocaleDateString(
-                            "en-US",
-                            {
-                              day: "numeric",
-                              month: "long",
-                              year: "numeric",
-                              ordinalDate: true,
-                            }
-                          )}
-                        </small>
-                      </span>
-                      {post.image && (
-                        <div className="img-container mt-3">
-                          <img
-                            src={`${baseURL}/post-images/${post.image}`}
-                            width={"500"}
-                          />
-                        </div>
-                      )}
-                      <div className="d-flex justify-content-around mt-5">
-                        <span className="btn" style={{ color: "red" }}>
-                          <CiHeart style={{ fontSize: "20px", color: "red" }} />{" "}
-                          Like{" "}
-                        </span>
-                        <span className="btn" style={{ color: "green" }}>
-                          <MdHandshake
-                            style={{ fontSize: "20px", color: "green" }}
-                          />{" "}
-                          Interested{" "}
-                        </span>
-                      </div>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="col-md-3"></div>
           </div>
         </div>
       </div>

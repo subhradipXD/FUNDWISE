@@ -1,7 +1,7 @@
 const postModel = require("../models/postModel");
 const userModel = require("../models/userModel");
 const jwt = require("jsonwebtoken");
-require('dotenv').config();
+require("dotenv").config();
 
 const Username = async (req, res) => {
   const { username } = req.body;
@@ -9,7 +9,7 @@ const Username = async (req, res) => {
   console.log(user);
   if (!user) {
     return res.json({ error: false, message: "Valid Username!" });
-  }else{
+  } else {
     return res.json({ error: true, message: "Username Already Exist!" });
   }
 };
@@ -33,7 +33,7 @@ const Register = async (req, res) => {
       email,
       password,
       role,
-      username
+      username,
     });
 
     await newUser.save();
@@ -75,21 +75,22 @@ const editUser = async (req, res) => {
   console.log(req.body);
   try {
     const user_id = req.params.userID;
-    const { name, phone, email, username, about } = req.body;
-    // const file = req.file !== undefined ? req.file.filename : "";
-
+    const { name, phone, email, about } = req.body;
+console.log( user_id, name, phone, email, about );
     const User = await userModel.findByIdAndUpdate(
       user_id,
-      { name, email, phone, username,about, 
-        // avatar:file 
-      },
+      { name, email, phone, about },
       { new: true }
     );
     if (!User) {
-      return res.status(400).json({ message: "User not found" , error:true});
+      return res.status(400).json({ message: "User not found", error: true });
     }
 
-    res.json({ message: "Your profile updated successfully", error: false,response:User});
+    res.json({
+      message: "Your profile updated successfully",
+      error: false,
+      response: User,
+    });
   } catch (e) {
     res.sendStatus(400).send(e);
   }
@@ -118,7 +119,6 @@ const getCurrentUser = async (req, res) => {
     res.status(400).send(e);
   }
 };
-
 
 const path = require("path");
 
@@ -150,9 +150,7 @@ const editAvatar = async (req, res) => {
       // Save the new avatar
       user.avatar = req.file.filename;
     } else {
-      return res
-        .status(400)
-        .json({ error: true, message: "No file provided" });
+      return res.status(400).json({ error: true, message: "No file provided" });
     }
 
     // Save the updated user

@@ -17,10 +17,14 @@ const path = require('path');
 app.use(
   "/post-images",
   require("express").static(path.join(__dirname, "public/uploads/posts"))
-);app.use(require("express").json());
+);
+
+app.use(require("express").json());
 app.use("/users", userRouter);
 app.use("/post", postRouter);
 app.use("/admin", adminRouter);
+
+
 
 mongoose
   .connect(
