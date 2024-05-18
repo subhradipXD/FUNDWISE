@@ -7,19 +7,13 @@ const adminRouter = require("./routes/adminRoute.js");
 const mongoose = require("mongoose");
 require('dotenv').config();
 
-
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
-
-app.use(bodyParser.json());
+app.use(bodyParser.json()); 
 
 const path = require('path');
-app.use(
-  "/post-images",
-  require("express").static(path.join(__dirname, "public/uploads/posts"))
-);
-
-app.use(require("express").json());
+app.use("/post-images", require("express").static(path.join(__dirname, "public/uploads/posts")));
+app.use(require("express").json()); 
 app.use("/users", userRouter);
 app.use("/post", postRouter);
 app.use("/admin", adminRouter);

@@ -67,6 +67,7 @@ function UserProfile() {
       setAbout(user.about);
     }
   }, [user]);
+
   // Function to handle file input change and update image preview
   const handleImageChange = (event) => {
     const file = event.target.files[0];
@@ -90,18 +91,10 @@ function UserProfile() {
       formData.append("phone", newPhoneNumber);
       formData.append("name", newName);
       formData.append("about", about);
-
-      const config = {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${cookies.token}`,
-        },
-      };
-
+      console.log(formData);
       const res = await axios.post(
         `${baseURL}/users/edit/${user._id}`,
-        formData,
-        config
+        formData
       );
 
       console.log("Profile updated successfully:", res.data);
