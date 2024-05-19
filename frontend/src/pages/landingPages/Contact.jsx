@@ -2,7 +2,9 @@ import Navbar from "../../inc/Navbar";
 import CustomCSS from "../../custom.module.css";
 import Footer from "../../inc/Footer";
 import axios from 'axios';
-import { useState } from 'react';
+import { useNavigate } from "react-router-dom";
+import { useState, useContext } from 'react';
+import { UserContext } from "../../Context/ContextProvider";
 
 function Contact() {
   const [formData, setFormData] = useState({
@@ -10,10 +12,10 @@ function Contact() {
     email: '',
     message: ''
   });
-
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-
+  const navigate = useNavigate();
+  const {user} = useContext(UserContext);
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
@@ -23,10 +25,13 @@ function Contact() {
     e.preventDefault();
     try {
       const response = await axios.post('http://localhost:2000/send-feedback', formData);
+
+      await axios.post('http://localhost:5000/send_email_feedback',{...formData, email:user?.email});
+
       if (response.data.success) {
         setSuccessMessage('Your message has been sent successfully!');
         setErrorMessage('');
-        setFormData({name:'', email:'',message:''});
+        setFormData({name:'',message:''});
       } else {
         setErrorMessage('Failed to send your message. Please try again.');
         setSuccessMessage('');
@@ -36,6 +41,9 @@ function Contact() {
       setSuccessMessage('');
     }
   };
+
+  if(!user)
+  navigate('/login');
 
   return (
     <>
@@ -76,7 +84,7 @@ function Contact() {
                       />
                     </div>
                   </div>
-                  <div className="col-md-12">
+                  {/*<div className="col-md-12">
                     <div className="mb-3">
                       <input
                         className="form-control"
@@ -88,7 +96,7 @@ function Contact() {
                         onChange={handleChange}
                       />
                     </div>
-                  </div>
+                  </div>*/}
                   <div className="col-md-12">
                     <div className="mb-3">
                       <textarea
@@ -105,6 +113,7 @@ function Contact() {
                   <button
                     className="btn btn-secondary btn-lg btn-block mt-3"
                     type="submit"
+                    // onClick={sendMessage}
                   >
                     Send Now
                   </button>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import { BiUser, BiPhone, BiInfoCircle } from "react-icons/bi";
 import { GoVerified } from "react-icons/go";
 import Footer from "../../inc/Footer";
@@ -19,29 +19,12 @@ function UserProfile() {
   const navigate = useNavigate();
   const { user, setUser, userPosts, setUserPosts } = useContext(UserContext);
   const [cookies, setCookies] = useCookies(["token"]);
-const [imageFile, setImageFile] = useState(undefined);
+  const [imageFile, setImageFile] = useState(undefined);
   if (!cookies.token) {
     navigate("/");
   }
 
   const usernameRef = useRef(null);
-
-  useEffect(() => {
-    const clipboard = new ClipboardJS(".copy-username", {
-      text: function (trigger) {
-        return trigger.getAttribute("data-username");
-      },
-    });
-
-    clipboard.on("success", function (e) {
-      e.clearSelection();
-      alert("Username copied to clipboard!");
-    });
-
-    return () => {
-      clipboard.destroy();
-    };
-  }, []);
 
   const [imagePreview, setImagePreview] = useState("");
   const [originalUserData, setOriginalUserData] = useState(null);
@@ -68,7 +51,7 @@ const [imageFile, setImageFile] = useState(undefined);
   const handleImageChange = (event) => {
     const file = event.target.files[0];
     const reader = new FileReader();
-setImageFile(file);
+    setImageFile(file);
     reader.onloadend = () => {
       setImagePreview(reader.result);
     };
@@ -114,21 +97,24 @@ setImageFile(file);
     try {
       // const formData = new FormData();
       // const newAvatar = Buffer.from(avatar).toString('base64');
-    
+
       const file = imageFile;
       const reader = new FileReader();
-  
-      reader.onload = () => {
+
+      reader.onloadend = async () => {
         // setImagePreview(reader.result);
         // if (file !== null) {
-          // formData.append("avatar", reader.result);
-          setAvatar(reader.result);
-        }
+        // formData.append("avatar", reader.result);
+        setAvatar(reader.result);
+        setUser({ ...user, avatar: reader.result });
+        await axios.post(`${baseURL}/users/edit-avatar/${user._id}`, {
+          img: reader.result,
+        });
+      };
       // };
-  
-      if (file) {
-        reader.readAsDataURL(file);
-      }
+
+      if (file) reader.readAsDataURL(file);
+
       const config = {
         headers: {
           "Content-Type": "multipart/form-data",
@@ -136,13 +122,11 @@ setImageFile(file);
         },
       };
 
-      const res = await axios.post(
-        `${baseURL}/users/edit-avatar/${user._id}`,
-        {img: reader.result},
-        config
-      );
+      // const res = await axios.post(`${baseURL}/users/edit-avatar/${user._id}`, {
+      //   img: avatar,
+      // });
 
-      console.log("Profile picture updated successfully:", res.data);
+      // console.log("Profile picture updated successfully:", res.data);
       // if (res.data.error === false) {
       //   Swal.fire({
       //     icon: "success",
@@ -174,17 +158,22 @@ setImageFile(file);
           timer: 2000,
         });
         // Remove the deleted post from the userPosts state
-        setUserPosts((prevPosts) => prevPosts.filter(post => post._id !== postID));
+        setUserPosts((prevPosts) =>
+          prevPosts.filter((post) => post._id !== postID)
+        );
       }
     } catch (error) {
       console.error("Failed to delete post:", error);
       Swal.fire({
         icon: "error",
         title: "Failed to delete post",
-        text: error.response ? error.response.data.message : "Something went wrong",
+        text: error.response
+          ? error.response.data.message
+          : "Something went wrong",
       });
     }
   };
+  if (!user) navigate("/login");
 
   return (
     <>
@@ -194,8 +183,8 @@ setImageFile(file);
           <div className="row">
             <div className="col-md-4">
               <img
-              // style={{objectFit:'contain'}}
-                src={avatar|| userImage}
+                // style={{objectFit:'contain'}}
+                src={user?.avatar || userImage}
                 width={200}
                 alt="User"
                 className="img-fluid rounded-circle mb-3 shadow mb-md-0 bg-body-tertiary object-fit-contain border rounded"
@@ -262,7 +251,7 @@ setImageFile(file);
                 .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
                 .map((post) => (
                   <li
-                    key={post && post._id}
+                    key={post._id}
                     className="mb-3 shadow p-3 bg-body-tertiary rounded"
                   >
                     <div className="card-body">
@@ -289,7 +278,9 @@ setImageFile(file);
                                   backgroundColor: "red",
                                   color: "white",
                                 }}
-                                onClick={() => { deletePost(post._id, user._id) }}
+                                onClick={() => {
+                                  deletePost(post._id, user._id);
+                                }}
                               >
                                 Delete
                               </button>
@@ -520,7 +511,7 @@ setImageFile(file);
                   <img
                     width={150}
                     className="img-fluid rounded-circle mb-3 shadow mb-md-0 bg-body-tertiary rounded custom-image-preview"
-                    src={imagePreview|| userImage}
+                    src={imagePreview || userImage}
                     alt="User"
                   />
                 </div>

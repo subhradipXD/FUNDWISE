@@ -2,12 +2,13 @@ const postModel = require("../models/postModel");
 
 const feed = async (req, res) => {
   try {
-    const { userId, title, description, postBy } = req.body; 
-    console.log(req.body.postBy);
+    const { userId, title, description, postBy, email } = req.body;
+
     const file = req.file !== undefined ? req.file.filename : "";
     const newPost = new postModel({
       userId,
       title,
+      email,
       description,
       image: file,
       postBy,
@@ -28,7 +29,7 @@ const feed = async (req, res) => {
 
 const showposts = async (req, res) => {
   try {
-    const Posts = await postModel.find({});
+    const Posts = await postModel.find();
 
     res.status(200).json(Posts);
   } catch (e) {
@@ -36,6 +37,31 @@ const showposts = async (req, res) => {
   }
 };
 
+const updatePost = async (req, res) => {
+  const { postID, category } = req.params;
+  try {
+    let post;
+    if (category == "likes")
+      post = await postModel.findByIdAndUpdate(postID, {
+        $inc: { likes: 1 },
+      });
+    else
+      post = await postModel.findByIdAndUpdate(postID, {
+        $inc: { interest: 1 },
+      });
+
+    if (!post) {
+      return res.status(404).json({
+        error: true,
+        message: "Post not found",
+      });
+    }
+    return res.status(200).json({
+      error: false,
+      message: "Post liked",
+    });
+  } catch (error) {}
+};
 
 const deletePost = async (req, res) => {
   const { postID } = req.params;
@@ -47,19 +73,19 @@ const deletePost = async (req, res) => {
     if (!post) {
       return res.status(404).json({
         error: true,
-        message: 'Post not found',
+        message: "Post not found",
       });
     }
 
     return res.status(200).json({
       error: false,
-      message: 'Post deleted successfully',
+      message: "Post deleted successfully",
     });
   } catch (error) {
-    console.error('Failed to delete post:', error);
+    console.error("Failed to delete post:", error);
     return res.status(500).json({
       error: true,
-      message: 'An error occurred while deleting the post',
+      message: "An error occurred while deleting the post",
     });
   }
 };
@@ -67,5 +93,6 @@ const deletePost = async (req, res) => {
 module.exports = {
   feed,
   showposts,
-  deletePost
+  updatePost,
+  deletePost,
 };

@@ -2,13 +2,14 @@ import LoggedInMenu from "../../inc/LoggedInMenu";
 import addPost from "../../assets/feed/addPost.png";
 import { CiHeart } from "react-icons/ci";
 import { MdHandshake } from "react-icons/md";
-import { useState, useEffect, useContext } from "react";
+import { useState, useMemo, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import "./feed.css";
 import { useCookies } from "react-cookie";
 import axios from "axios";
 import { UserContext } from "../../Context/ContextProvider";
+import userImg from "../../assets/navImg/user.png";
 
 function Feed() {
   const baseURL = "http://localhost:2000";
@@ -20,7 +21,7 @@ function Feed() {
   const navigate = useNavigate();
   const [cookies, setCookies] = useCookies(["token"]);
   const { user, userPosts, setUserPosts } = useContext(UserContext);
-  console.log(user);
+
   const [searchQuery, setSearchQuery] = useState("");
   if (!cookies.token) {
     navigate("/");
@@ -30,6 +31,7 @@ function Feed() {
       const formData = new FormData();
       formData.append("userId", user._id);
       formData.append("title", title);
+      formData.append("email", user.email);
       formData.append("description", description);
       formData.append("postBy", user.name);
       if (postImage !== null) {
@@ -62,6 +64,23 @@ function Feed() {
       // Handle error
     }
   };
+  const notifyOwner = async (ownerEmail, title) => {
+    if (localStorage.getItem("liked") == title) {
+      alert("already interested");
+      return;
+    }
+    const response = await axios.post(
+      "http://localhost:5000/send_email_interest",
+      {
+        ownerEmail,
+        title,
+        interestUser: user,
+      }
+    );
+
+    // await axios.post(""); //update like;
+    localStorage.setItem("liked", title);
+  };
 
   const getPosts = async () => {
     try {
@@ -79,7 +98,7 @@ function Feed() {
       console.log(err);
     }
   };
-  useEffect(() => {
+  useMemo(() => {
     getPosts();
   }, [searchQuery]);
   return (
@@ -123,7 +142,25 @@ function Feed() {
                       className="mb-1 shadow p-3 bg-body-tertiary rounded"
                     >
                       <div className="card-body">
-                        <h5>{post?.postBy}</h5>
+                        <div className="d-flex align-items-center mb-3">
+                          <img
+                            src={userImg}
+                            alt=""
+                            className="user-img rounded-circle"
+                            style={{
+                              width: "50px",
+                              height: "50px",
+                              border: "2px solid #ddd",
+                              padding: "2px",
+                            }}
+                          />
+                          <h5
+                            className="ms-3 mb-0"
+                            style={{ fontWeight: "bold" }}
+                          >
+                            {post?.postBy}
+                          </h5>
+                        </div>
                         <h6 className="card-title">{post.title}</h6>
                         <p
                           className="card-text mt-2"
@@ -149,6 +186,7 @@ function Feed() {
                             <img
                               src={`${baseURL}/post-images/${post.image}`}
                               width={"500"}
+                              alt=""
                             />
                           </div>
                         )}
@@ -159,7 +197,13 @@ function Feed() {
                             />{" "}
                             Like{" "}
                           </span>
-                          <span className="btn" style={{ color: "green" }}>
+                          <span
+                            onClick={() => {
+                              notifyOwner(post.email, post.title);
+                            }}
+                            className="btn"
+                            style={{ color: "green" }}
+                          >
                             <MdHandshake
                               style={{ fontSize: "20px", color: "green" }}
                             />{" "}

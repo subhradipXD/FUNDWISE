@@ -6,6 +6,7 @@ import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import swal from "sweetalert2";
+import { uuidv4 } from "uuidv7";
 
 function Register() {
   const [name, setName] = useState("");
@@ -70,7 +71,7 @@ function Register() {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    const result = uuidv4();
     try {
       const res = await axios.post("http://localhost:2000/users/register", {
         name,

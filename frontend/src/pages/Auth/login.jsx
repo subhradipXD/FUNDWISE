@@ -10,31 +10,31 @@ import { UserContext } from "../../Context/ContextProvider";
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  console.log(email);
-  console.log(password);
+  
   const navigate = useNavigate();
   const [_, setCookies] = useCookies(["token"]);
-
+const {setUser}=useContext(UserContext);
   const handleLogin = async () => {
     try {
-      const response = await axios.post(`http://localhost:2000/users/login`, {
+      const {data} = await axios.post(`http://localhost:2000/users/login`, {
         email: email,
         password: password,
       });
-      console.log("Login successful:", response);
-      console.log(response.data);
-
-      if (response.data.error === false) {
-        setCookies("token", response.data.response.token);
-        if (response.data.response.user.role === "Investor") {
+      console.log("Login successful:", data);
+      console.log(data);
+setUser({email:data?.response?.user?.email,name:data?.response?.user?.name,
+_id:data?.response?.user?._id});
+      if (data.error === false) {
+        setCookies("token", data.response.token);
+        if (data.response.user.role === "Investor") {
           navigate("/feed", { replace: true });
-        } else if (response.data.response.user.role === "Admin") {
+        } else if (data.response.user.role === "Admin") {
           navigate("/dashboard", { replace: true });
-        } else if (response.data.response.user.role === "Founder") {
+        } else if (data.response.user.role === "Founder") {
           navigate("/feed", { replace: true });
         }
       } else {
-        swal.fire("Error!", response.data.message, "error");
+        swal.fire("Error!", data.message, "error");
       }
     } catch (error) {
       console.error("Error fetching user details:", error);

@@ -1,3 +1,4 @@
+const { default: mongoose } = require("mongoose");
 const postModel = require("../models/postModel");
 const userModel = require("../models/userModel");
 const jwt = require("jsonwebtoken");
@@ -16,7 +17,7 @@ const Username = async (req, res) => {
 
 const Register = async (req, res) => {
   try {
-    const { name, phone, email, password, role, username } = req.body; 
+    const { name, phone, email, password, role, username } = req.body;
 
     const user = await userModel.findOne({ email });
     console.log(req.body);
@@ -84,9 +85,13 @@ const editUser = async (req, res) => {
     if (!User) {
       return res.status(400).json({ message: "User not found", error: true });
     }
-    res.json({ message: "Your profile updated successfully", error: false, response: User, });
+    res.json({
+      message: "Your profile updated successfully",
+      error: false,
+      response: User,
+    });
   } catch (e) {
-    res.sendStatus(400).send(e);
+    res.status(400).json({ error: true, message: e.message });
   }
 };
 
@@ -114,37 +119,34 @@ const getCurrentUser = async (req, res) => {
   }
 };
 
-const Buffer = require('node:buffer');
-
 const editAvatar = async (req, res) => {
-  console.log(req.body);
-//   try {
-//     const userId = req.params.userID;
-//     const user = await userModel.findById(userId);
+  try {
+    const userId = req.params.userID;
+    const user = await userModel.findById(userId);
+    console.log(user);
+    if (!user)
+      return res.status(404).json({ error: true, message: "User not found" });
 
-//     if (!user) {
-//       return res.status(404).json({ error: true, message: "User not found" });
-//     }
-//     // const file = req.file !== undefined ? req.file.filename : "";
-//     // Handle avatar upload
-// console.log(req.body);
-//     const newAvatar = new userModel({
-//       // avatar: req.file
+    // const avatarPath = req.file.path.replace(/\\/g, "/"); // Normalize path for cross-platform
+    const { img } = req.body;
+    userModel.updateOne(
+      { email: user.email },
+      { $set: { avatar: img } },
+      { new: true, upsert: true, overwrite: true }
+    );
 
-//     })
+    // user.avatar = avatarPath;
+    // await user.save();
 
-//     // Save the updated user
-//     await newAvatar.save();
-
-//     res.status(200).json({
-//       error: false,
-//       message: "Avatar updated successfully",
-//       response: newAvatar,
-//     });
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({ error: true, message: "Server error" });
-//   }
+    res.status(200).json({
+      error: false,
+      message: "Avatar updated successfully",
+      response: user,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: true, message: "Server error" });
+  }
 };
 
 module.exports = {

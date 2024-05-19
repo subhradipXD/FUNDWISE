@@ -5,9 +5,9 @@ const postRouter = require("./routes/postRoute.js");
 const adminRouter = require("./routes/adminRoute.js");
 const mongoose = require("mongoose");
 require("dotenv").config();
-app.use(require("express").urlencoded({ extended: true }));
+app.use(require("express").urlencoded({ extended: true , limit: "50mb"}));
 app.use(cors());
-app.use(require("express").json());
+app.use(require("express").json({ limit: "50mb"}));
 
 const path = require("path");
 app.use(

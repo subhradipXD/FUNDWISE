@@ -11,29 +11,14 @@ const router = express.Router();
 const multer = require("multer");
 const path = require("path");
 
-// Add this line to use the express.json() middleware
-router.use(express.json());
-
 const storageEngine = multer.diskStorage({
-  destination: "../backend/public/uploads/users/",
+  destination: path.join(__dirname, "../public/uploads/users/"),
   filename: function (req, file, callback) {
-    callback(
-      null,
-      file.filename + "-" + Date.now() + path.extname(file.originalname)
-    );
+    callback(null, file.fieldname + "-" + Date.now() + path.extname(file.originalname));
   },
 });
 
-const fileFilter = (req, file, callback) => {
-  let pattern = /JPG|JPEG|PNG|SVG|jpg|jpeg|png|svg/;
-  if (pattern.test(path.extname(file.originalname))) {
-    callback(null, true);
-  } else {
-    callback("Error: not a valid file");
-  }
-};
-
-const upload = multer({ storage: storageEngine, fileFilter });
+const upload = multer({ storage: storageEngine });
 
 router.post("/login", Login);
 router.post("/register", Register);
