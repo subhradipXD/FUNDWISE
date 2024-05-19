@@ -19,7 +19,7 @@ const storageEngine = multer.diskStorage({
   filename: function (req, file, callback) {
     callback(
       null,
-      file.fieldname + "-" + Date.now() + path.extname(file.originalname)
+      file.filename + "-" + Date.now() + path.extname(file.originalname)
     );
   },
 });

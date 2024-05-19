@@ -114,33 +114,37 @@ const getCurrentUser = async (req, res) => {
   }
 };
 
+const Buffer = require('node:buffer');
 
 const editAvatar = async (req, res) => {
-  try {
-    const userId = req.params.userID;
-    const user = await userModel.findById(userId);
+  console.log(req.body);
+//   try {
+//     const userId = req.params.userID;
+//     const user = await userModel.findById(userId);
 
-    if (!user) {
-      return res.status(404).json({ error: true, message: "User not found" });
-    }
-    const file = req.file !== undefined ? req.file.filename : "";
-    // Handle avatar upload
-    const newAvatar = new userModel({
-      avatar: file
-    })
+//     if (!user) {
+//       return res.status(404).json({ error: true, message: "User not found" });
+//     }
+//     // const file = req.file !== undefined ? req.file.filename : "";
+//     // Handle avatar upload
+// console.log(req.body);
+//     const newAvatar = new userModel({
+//       // avatar: req.file
 
-    // Save the updated user
-    await newAvatar.save();
+//     })
 
-    res.status(200).json({
-      error: false,
-      message: "Avatar updated successfully",
-      response: newAvatar,
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: true, message: "Server error" });
-  }
+//     // Save the updated user
+//     await newAvatar.save();
+
+//     res.status(200).json({
+//       error: false,
+//       message: "Avatar updated successfully",
+//       response: newAvatar,
+//     });
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ error: true, message: "Server error" });
+//   }
 };
 
 module.exports = {

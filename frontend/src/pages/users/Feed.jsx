@@ -20,6 +20,7 @@ function Feed() {
   const navigate = useNavigate();
   const [cookies, setCookies] = useCookies(["token"]);
   const { user, userPosts, setUserPosts } = useContext(UserContext);
+  console.log(user);
   const [searchQuery, setSearchQuery] = useState("");
   if (!cookies.token) {
     navigate("/");
@@ -30,6 +31,7 @@ function Feed() {
       formData.append("userId", user._id);
       formData.append("title", title);
       formData.append("description", description);
+      formData.append("postBy", user.name);
       if (postImage !== null) {
         formData.append("image", postImage);
       }
@@ -115,12 +117,13 @@ function Feed() {
                 <div>No posts found for the search query "{searchQuery}"</div>
               ) : (
                 <ul className="list-unstyled">
-                  {posts.map((post) => (
+                  {posts.map((post, i) => (
                     <li
-                      key={post._id}
+                      key={i}
                       className="mb-1 shadow p-3 bg-body-tertiary rounded"
                     >
                       <div className="card-body">
+                        <h5>{post?.postBy}</h5>
                         <h6 className="card-title">{post.title}</h6>
                         <p
                           className="card-text mt-2"

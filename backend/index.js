@@ -1,15 +1,13 @@
 const cors = require("cors");
 const app = require("express")();
-const bodyParser = require("body-parser");
 const userRouter = require("./routes/userRoute.js");
 const postRouter = require("./routes/postRoute.js");
 const adminRouter = require("./routes/adminRoute.js");
 const mongoose = require("mongoose");
 require("dotenv").config();
-
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(require("express").urlencoded({ extended: true }));
 app.use(cors());
-app.use(bodyParser.json());
+app.use(require("express").json());
 
 const path = require("path");
 app.use(
@@ -21,9 +19,9 @@ app.use("/users", userRouter);
 app.use("/post", postRouter);
 app.use("/admin", adminRouter);
 
+
+
 const nodemailer = require("nodemailer");
-
-
 
 // feedback mail using fake smtp server ethereal
 app.post("/send-feedback", async (req, res) => {

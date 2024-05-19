@@ -18,9 +18,8 @@ function UserProfile() {
   const baseURL = "http://localhost:2000";
   const navigate = useNavigate();
   const { user, setUser, userPosts, setUserPosts } = useContext(UserContext);
-  console.log(userPosts);
   const [cookies, setCookies] = useCookies(["token"]);
-
+const [imageFile, setImageFile] = useState(undefined);
   if (!cookies.token) {
     navigate("/");
   }
@@ -69,7 +68,7 @@ function UserProfile() {
   const handleImageChange = (event) => {
     const file = event.target.files[0];
     const reader = new FileReader();
-
+setImageFile(file);
     reader.onloadend = () => {
       setImagePreview(reader.result);
     };
@@ -92,7 +91,7 @@ function UserProfile() {
       const res = await axios.post(
         `${baseURL}/users/edit/${user._id}`,
         formData,
-        { headers: { "Content-Type": "multipart/form-data" } }
+        { headers: { "Content-Type": "application/json" } }
       );
 
       console.log("Profile updated successfully:", res.data);
@@ -113,11 +112,23 @@ function UserProfile() {
 
   const handleEditProfilePicture = async (e) => {
     try {
-      const formData = new FormData();
-      if (avatar !== null) {
-        formData.append("avatar", avatar);
+      // const formData = new FormData();
+      // const newAvatar = Buffer.from(avatar).toString('base64');
+    
+      const file = imageFile;
+      const reader = new FileReader();
+  
+      reader.onload = () => {
+        // setImagePreview(reader.result);
+        // if (file !== null) {
+          // formData.append("avatar", reader.result);
+          setAvatar(reader.result);
+        }
+      // };
+  
+      if (file) {
+        reader.readAsDataURL(file);
       }
-
       const config = {
         headers: {
           "Content-Type": "multipart/form-data",
@@ -127,20 +138,20 @@ function UserProfile() {
 
       const res = await axios.post(
         `${baseURL}/users/edit-avatar/${user._id}`,
-        formData,
+        {img: reader.result},
         config
       );
 
       console.log("Profile picture updated successfully:", res.data);
-      if (res.data.error === false) {
-        Swal.fire({
-          icon: "success",
-          title: res.data.message,
-          showConfirmButton: false,
-          timer: 2000,
-        });
-        setUser(res.data.response);
-      }
+      // if (res.data.error === false) {
+      //   Swal.fire({
+      //     icon: "success",
+      //     title: res.data.message,
+      //     showConfirmButton: false,
+      //     timer: 2000,
+      //   });
+      //   setUser(res.data.response);
+      // }
     } catch (error) {
       // Handle errors
       console.error("Failed to update profile picture:", error);
@@ -183,10 +194,11 @@ function UserProfile() {
           <div className="row">
             <div className="col-md-4">
               <img
-                src={userImage}
+              // style={{objectFit:'contain'}}
+                src={avatar|| userImage}
                 width={200}
                 alt="User"
-                className="img-fluid rounded-circle mb-3 shadow mb-md-0 bg-body-tertiary rounded"
+                className="img-fluid rounded-circle mb-3 shadow mb-md-0 bg-body-tertiary object-fit-contain border rounded"
               />
             </div>
             <div className="col-md-8 shadow p-4 p-md-5 bg-body-tertiary rounded">
@@ -490,7 +502,7 @@ function UserProfile() {
                   id="formFile"
                   onChange={(e) => {
                     handleImageChange(e);
-                    setAvatar(e.target.value);
+                    setAvatar(e.target.files[0]);
                   }}
                 />
               </div>
@@ -508,7 +520,7 @@ function UserProfile() {
                   <img
                     width={150}
                     className="img-fluid rounded-circle mb-3 shadow mb-md-0 bg-body-tertiary rounded custom-image-preview"
-                    src={userImage}
+                    src={imagePreview|| userImage}
                     alt="User"
                   />
                 </div>
