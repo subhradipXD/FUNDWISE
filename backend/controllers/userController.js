@@ -137,8 +137,12 @@ const editAvatar = async (req, res) => {
 
     // const avatarPath = req.file.path.replace(/\\/g, "/"); // Normalize path for cross-platform
     // console.log(img);
-    userModel.findByIdAndDelete(userId);
-    userModel.create({ ...user, avatar: img });
+    userModel.findByIdAndUpdate(
+      user._id,
+      { avatar: img },
+      { new: true, upsert: true, multi: true }
+    );
+
     // user.avatar = avatarPath;
     // await user.save();
 
