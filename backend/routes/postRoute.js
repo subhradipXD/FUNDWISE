@@ -4,6 +4,7 @@ const {
   feed,
   showposts,
   updatePost,
+  updatePostLikes,
   deletePost,
 } = require("../controllers/postController.js");
 const router = express.Router();
@@ -37,7 +38,8 @@ const upload = multer({
   fileFilter,
 });
 router.post("/feed", upload.single("image"), feed);
-router.put("/update_like_interest", updatePost);
+router.put("/update_like_interest", updatePostLikes);
+router.post("/update_post", updatePost);
 router.delete("/:postID", deletePost);
 
 module.exports = router;

@@ -71,12 +71,40 @@ const RegisterVerify = ({
   }
 
   return (
-    <div style={OTPContainerStyle}>
-      <button onClick={() => setEnableOTPModal(false)}></button>
-      <form onSubmit={verifyOTP} style={OTPModal}>
-        <input type="number" ref={inputOTPRef} />
-        <input type="submit" />
-      </form>
+    <div className="d-flex justify-content-center align-items-center position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-75">
+      <div
+        className="bg-white p-4 rounded position-relative"
+        style={{ width: 300 }}
+      >
+        <button
+          type="button"
+          className="btn-close position-absolute top-0 end-0 m-3"
+          aria-label="Close"
+          onClick={() => setEnableOTPModal(false)}
+        ></button>
+        <form onSubmit={verifyOTP} className="text-center">
+          <div className="mb-3">
+            <label htmlFor="otp" className="form-label">
+              Enter OTP
+            </label>
+            <input
+              type="number"
+              className="form-control"
+              id="otp"
+              ref={inputOTPRef}
+              required
+            />
+          </div>
+          <div className="mb-3">
+            <p className="text-muted">
+              Please enter the OTP sent to your registered mobile number.
+            </p>
+          </div>
+          <button type="submit" className="btn btn-primary w-100">
+            Verify
+          </button>
+        </form>
+      </div>
     </div>
   );
 };
