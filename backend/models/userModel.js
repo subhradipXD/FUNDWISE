@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { Buffer } = require("node:buffer");
 
 const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
@@ -7,7 +8,7 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true },
   role: { type: String, required: true },
   about: String,
-  avatar: String,
+  avatar: { type: String, required: false },
   username: { type: String, required: true, unique: true },
 });
 module.exports = mongoose.model("User", userSchema);

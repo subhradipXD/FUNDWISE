@@ -8,6 +8,7 @@ export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [userPosts, setUserPosts] = useState([]);
   const [cookies, setCookies] = useCookies(["token"]);
+  const [avatar, setAvatar] = useState(null);
 
   useEffect(() => {
     const getCurrentUser = async (hashedUserID) => {
@@ -33,7 +34,9 @@ export const UserProvider = ({ children }) => {
   }, [cookies.token, window.location.pathname]);
 
   return (
-    <UserContext.Provider value={{ user, setUser, userPosts, setUserPosts }}>
+    <UserContext.Provider
+      value={{ setAvatar, avatar, user, setUser, userPosts, setUserPosts }}
+    >
       {children}
     </UserContext.Provider>
   );

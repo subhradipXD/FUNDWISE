@@ -72,7 +72,7 @@ function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setEnableOTPModal(true);
-    const otp = parseInt(Math.random() * 8);
+    const otp = parseInt(Math.random() * 1000000);
     setOTP(otp);
     await axios.post("http://localhost:5000/send_email_OTP", {
       OTP: otp,

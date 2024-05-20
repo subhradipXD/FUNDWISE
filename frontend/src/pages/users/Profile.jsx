@@ -10,14 +10,14 @@ import Swal from "sweetalert2";
 import { useCookies } from "react-cookie";
 import { useNavigate } from "react-router-dom";
 import { useRef, useEffect, useState, useContext } from "react";
-import ClipboardJS from "clipboard";
 import axios from "axios";
 import { UserContext } from "../../Context/ContextProvider";
 
 function UserProfile() {
   const baseURL = "http://localhost:2000";
   const navigate = useNavigate();
-  const { user, setUser, userPosts, setUserPosts } = useContext(UserContext);
+  const { user, setUser, userPosts, setUserPosts, avatar, setAvatar } =
+    useContext(UserContext);
   const [cookies, setCookies] = useCookies(["token"]);
   const [imageFile, setImageFile] = useState(undefined);
   if (!cookies.token) {
@@ -34,7 +34,6 @@ function UserProfile() {
   const [newUserName, setUserName] = useState("");
   const [about, setAbout] = useState("");
 
-  const [avatar, setAvatar] = useState(null);
   useEffect(() => {
     // Initialize state variables with original user data
     if (user) {
@@ -60,7 +59,7 @@ function UserProfile() {
       reader.readAsDataURL(file);
     }
   };
-  console.log(user);
+
   const handleEditProfile = async (e) => {
     e.preventDefault();
 
@@ -70,14 +69,13 @@ function UserProfile() {
       formData.append("phone", newPhoneNumber);
       formData.append("name", newName);
       formData.append("about", about);
-      console.log(formData);
+
       const res = await axios.post(
         `${baseURL}/users/edit/${user._id}`,
         formData,
         { headers: { "Content-Type": "application/json" } }
       );
 
-      console.log("Profile updated successfully:", res.data);
       if (res.data.error === false) {
         Swal.fire({
           icon: "success",
@@ -102,13 +100,11 @@ function UserProfile() {
       const reader = new FileReader();
 
       reader.onloadend = async () => {
-        // setImagePreview(reader.result);
-        // if (file !== null) {
-        // formData.append("avatar", reader.result);
         setAvatar(reader.result);
-        setUser({ ...user, avatar: reader.result });
-        await axios.post(`${baseURL}/users/edit-avatar/${user._id}`, {
+        console.log(typeof reader.result);
+        await axios.post(`${baseURL}/users/edit-avatar/`, {
           img: reader.result,
+          userId: user._id,
         });
       };
       // };
@@ -173,7 +169,7 @@ function UserProfile() {
       });
     }
   };
-  if (!user) navigate("/login");
+  // if (!user?.email) navigate("/login");
 
   return (
     <>
@@ -184,7 +180,7 @@ function UserProfile() {
             <div className="col-md-4">
               <img
                 // style={{objectFit:'contain'}}
-                src={user?.avatar || userImage}
+                src={avatar || userImage}
                 width={200}
                 alt="User"
                 className="img-fluid rounded-circle mb-3 shadow mb-md-0 bg-body-tertiary object-fit-contain border rounded"

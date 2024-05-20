@@ -2,6 +2,9 @@ const { default: mongoose } = require("mongoose");
 const postModel = require("../models/postModel");
 const userModel = require("../models/userModel");
 const jwt = require("jsonwebtoken");
+const { Buffer } = require("node:buffer");
+const fs = require("node:fs");
+
 require("dotenv").config();
 
 const Username = async (req, res) => {
@@ -126,18 +129,18 @@ const getCurrentUser = async (req, res) => {
 
 const editAvatar = async (req, res) => {
   try {
-    const userId = req.params.userID;
+    const { userId, img } = req.body;
     const user = await userModel.findById(userId);
     console.log(user);
     if (!user)
       return res.status(404).json({ error: true, message: "User not found" });
 
     // const avatarPath = req.file.path.replace(/\\/g, "/"); // Normalize path for cross-platform
-    const { img } = req.body;
+    // console.log(img);
     userModel.updateOne(
-      { email: user.email },
-      { $set: { avatar: img } },
-      { new: true, upsert: true, overwrite: true }
+      { _id: userId },
+      { avatar: img },
+      { new: true, upsert: true, multi: true }
     );
 
     // user.avatar = avatarPath;
