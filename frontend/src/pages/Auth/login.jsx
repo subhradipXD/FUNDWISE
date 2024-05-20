@@ -10,20 +10,23 @@ import { UserContext } from "../../Context/ContextProvider";
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  
+
   const navigate = useNavigate();
   const [_, setCookies] = useCookies(["token"]);
-const {setUser}=useContext(UserContext);
+  const { setUser } = useContext(UserContext);
   const handleLogin = async () => {
     try {
-      const {data} = await axios.post(`http://localhost:2000/users/login`, {
-        email: email,
-        password: password,
+      const { data } = await axios.post(`http://localhost:2000/users/login`, {
+        email,
+        password,
       });
       console.log("Login successful:", data);
       console.log(data);
-setUser({email:data?.response?.user?.email,name:data?.response?.user?.name,
-_id:data?.response?.user?._id});
+      setUser({
+        email: data?.response?.user?.email,
+        name: data?.response?.user?.name,
+        _id: data?.response?.user?._id,
+      });
       if (data.error === false) {
         setCookies("token", data.response.token);
         if (data.response.user.role === "Investor") {

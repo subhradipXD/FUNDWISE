@@ -38,16 +38,16 @@ const showposts = async (req, res) => {
 };
 
 const updatePost = async (req, res) => {
-  const { postID, category } = req.params;
+  const { postID, category, inc } = req.body;
   try {
     let post;
     if (category == "likes")
       post = await postModel.findByIdAndUpdate(postID, {
-        $inc: { likes: 1 },
+        $inc: { likes: inc },
       });
     else
       post = await postModel.findByIdAndUpdate(postID, {
-        $inc: { interest: 1 },
+        $inc: { interest: inc },
       });
 
     if (!post) {

@@ -4,9 +4,8 @@ import { Link } from "react-router-dom";
 import Footer from "../../inc/Footer";
 import { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 import swal from "sweetalert2";
-import { uuidv4 } from "uuidv7";
+import RegisterVerify from "./registerVerify";
 
 function Register() {
   const [name, setName] = useState("");
@@ -14,10 +13,11 @@ function Register() {
 
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
+  const [OTP, setOTP] = useState(0);
   const [password, setPassword] = useState("");
+  const [enableOTPModal, setEnableOTPModal] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState("");
   const [role, setRole] = useState("");
-  const navigate = useNavigate();
 
   const handleUsername = async (e) => {
     e.preventDefault();
@@ -71,30 +71,28 @@ function Register() {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const result = uuidv4();
-    try {
-      const res = await axios.post("http://localhost:2000/users/register", {
-        name,
-        username,
-        phone,
-        email,
-        password,
-        role,
-      });
-
-      if (!res.data.error) {
-        swal.fire("Success!", res.data.message, "success").then(() => {
-          navigate("/login", { replace: true });
-        });
-      } else {
-        swal.fire("Error!", res.data.message, "error");
-      }
-    } catch (err) {
-      console.log(err);
-    }
+    setEnableOTPModal(true);
+    const otp = parseInt(Math.random() * 8);
+    setOTP(otp);
+    await axios.post("http://localhost:5000/send_email_OTP", {
+      OTP: otp,
+      email,
+    });
   };
   return (
     <>
+      {enableOTPModal && (
+        <RegisterVerify
+          name={name}
+          OTP={OTP}
+          username={username}
+          role={role}
+          phone={phone}
+          setEnableOTPModal={setEnableOTPModal}
+          password={password}
+          email={email}
+        />
+      )}
       <div
         className="container-fluid d-flex justify-content-center align-items-center min-vh-100"
         style={{ background: "linear-gradient(to right, #FFFFFF, #FDFD96)" }}

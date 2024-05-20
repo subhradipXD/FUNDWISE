@@ -64,9 +64,8 @@ function Feed() {
       // Handle error
     }
   };
-  const notifyOwner = async (ownerEmail, title) => {
-    if (localStorage.getItem("liked") == title) {
-      alert("already interested");
+  const notifyOwner = async (ownerEmail, title, postID) => {
+    if (localStorage.getItem("interestInPost") == postID) {
       return;
     }
     const response = await axios.post(
@@ -79,7 +78,7 @@ function Feed() {
     );
 
     // await axios.post(""); //update like;
-    localStorage.setItem("liked", title);
+    localStorage.setItem("interestInPost", postID);
   };
 
   const getPosts = async () => {
@@ -101,6 +100,51 @@ function Feed() {
   useMemo(() => {
     getPosts();
   }, [searchQuery]);
+
+  async function interestORLikeCounterOfPost(postID, category) {
+    if (category == "interest") {
+      if (localStorage.getItem(postID) == "interest") {
+        Swal.fire({
+          title: "Already marked!",
+          icon: "warning",
+        });
+        return;
+      }
+
+      const res = await axios.put(
+        "http://localhost:2000/post/update_like_interest",
+        {
+          postID,
+          category: "interest",
+          inc: 1,
+        }
+      );
+      getPosts();
+      localStorage.setItem(postID, "interest");
+    } else {
+      if (localStorage.getItem(postID) == "liked") {
+        await axios.put("http://localhost:2000/post/update_like_interest", {
+          postID,
+          category: "likes",
+          inc: -1,
+        });
+        localStorage.removeItem(postID);
+        getPosts();
+        return;
+      }
+      const res = await axios.put(
+        "http://localhost:2000/post/update_like_interest",
+        {
+          postID,
+          category: "likes",
+          inc: 1,
+        }
+      );
+      getPosts();
+      localStorage.setItem(postID, "liked");
+    }
+  }
+
   return (
     <>
       <LoggedInMenu />
@@ -191,15 +235,22 @@ function Feed() {
                           </div>
                         )}
                         <div className="d-flex justify-content-around mt-5">
-                          <span className="btn" style={{ color: "red" }}>
+                          <span
+                            onClick={() => {
+                              interestORLikeCounterOfPost(post._id, "likes");
+                            }}
+                            className="btn"
+                            style={{ color: "red" }}
+                          >
                             <CiHeart
                               style={{ fontSize: "20px", color: "red" }}
                             />{" "}
-                            Like{" "}
+                            Like &nbsp; {post?.likes || 0}
                           </span>
                           <span
                             onClick={() => {
-                              notifyOwner(post.email, post.title);
+                              notifyOwner(post.email, post.title, post._id);
+                              interestORLikeCounterOfPost(post._id, "interest");
                             }}
                             className="btn"
                             style={{ color: "green" }}
@@ -207,7 +258,7 @@ function Feed() {
                             <MdHandshake
                               style={{ fontSize: "20px", color: "green" }}
                             />{" "}
-                            Interested{" "}
+                            Interested &nbsp; {post?.interest || 0}
                           </span>
                         </div>
                       </div>

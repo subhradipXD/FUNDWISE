@@ -5,9 +5,9 @@ const postRouter = require("./routes/postRoute.js");
 const adminRouter = require("./routes/adminRoute.js");
 const mongoose = require("mongoose");
 require("dotenv").config();
-app.use(require("express").urlencoded({ extended: true , limit: "50mb"}));
+app.use(require("express").urlencoded({ extended: true, limit: "50mb" }));
 app.use(cors());
-app.use(require("express").json({ limit: "50mb"}));
+app.use(require("express").json({ limit: "50mb" }));
 
 const path = require("path");
 app.use(
@@ -18,8 +18,6 @@ app.use(require("express").json());
 app.use("/users", userRouter);
 app.use("/post", postRouter);
 app.use("/admin", adminRouter);
-
-
 
 const nodemailer = require("nodemailer");
 
@@ -40,14 +38,13 @@ app.post("/send-feedback", async (req, res) => {
     from: `'"${name}👻" < ${email}>'`,
     to: `'${process.env.adminMail1}'`,
     subject: "Feedback from Contact Us Form",
-    text: `${message}`, 
+    text: `${message}`,
   });
 
   console.log("Message sent: %s", info.messageId);
-  if(info.messageId){
-    res.json({info, success:true, message: "feedback send successfully"});
+  if (info.messageId) {
+    res.json({ info, success: true, message: "feedback send successfully" });
   }
- 
 });
 
 // end feedback code

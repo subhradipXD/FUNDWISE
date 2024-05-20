@@ -53,23 +53,28 @@ const Register = async (req, res) => {
 
 const Login = async (req, res) => {
   const { email, password } = req.body;
-  const user = await userModel.findOne({ email });
-  console.log(user);
-  if (!user) {
-    return res.json({ error: true, message: "User doesn't exist" });
+  try {
+    const user = await userModel.findOne({ email });
+    console.log(user);
+
+    if (!user) {
+      return res.json({ error: true, message: "User doesn't exist" });
+    }
+    if (password !== user.password) {
+      res.json({ message: "Invalid Password", error: true });
+    }
+    const token = jwt.sign({ id: user._id }, process.env.HashID);
+    res.json({
+      error: false,
+      message: "Login success",
+      response: {
+        user: user,
+        token: token,
+      },
+    });
+  } catch (e) {
+    console.log("errorrr in login userController");
   }
-  if (password !== user.password) {
-    res.json({ message: "Invalid Password", error: true });
-  }
-  const token = jwt.sign({ id: user._id }, process.env.HashID);
-  res.json({
-    error: false,
-    message: "Login success",
-    response: {
-      user: user,
-      token: token,
-    },
-  });
 };
 
 const editUser = async (req, res) => {
