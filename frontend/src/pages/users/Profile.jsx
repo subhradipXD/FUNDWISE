@@ -10,33 +10,31 @@ import Swal from "sweetalert2";
 import { useCookies } from "react-cookie";
 import { useNavigate } from "react-router-dom";
 import { useRef, useEffect, useState, useContext } from "react";
-import ClipboardJS from "clipboard";
 import axios from "axios";
 import { UserContext } from "../../Context/ContextProvider";
+import PostEditModal from "./PostEditModal";
 
 function UserProfile() {
+  const [editModal, setEditModal] = useState(false);
+  const [originalUserData, setOriginalUserData] = useState(null);
+  const [newEmail, setNewEmail] = useState("");
+  const [newPhoneNumber, setPhoneNumber] = useState("");
+  const [post_ID, setPostID] = useState(null);
+  const [newName, setNewName] = useState("");
+  const [newUserName, setUserName] = useState("");
+  const [about, setAbout] = useState("");
   const baseURL = "http://localhost:2000";
   const navigate = useNavigate();
-  const { user, setUser, userPosts, setUserPosts } = useContext(UserContext);
+  const { user, setUser, userPosts, setUserPosts, avatar, setAvatar } =
+    useContext(UserContext);
   const [cookies, setCookies] = useCookies(["token"]);
-  const [imageFile, setImageFile] = useState(undefined);
   if (!cookies.token) {
     navigate("/");
   }
 
   const usernameRef = useRef(null);
 
-  const [imagePreview, setImagePreview] = useState("");
-  const [originalUserData, setOriginalUserData] = useState(null);
-  const [newEmail, setNewEmail] = useState("");
-  const [newPhoneNumber, setPhoneNumber] = useState("");
-  const [newName, setNewName] = useState("");
-  const [newUserName, setUserName] = useState("");
-  const [about, setAbout] = useState("");
-
-  const [avatar, setAvatar] = useState(null);
   useEffect(() => {
-    // Initialize state variables with original user data
     if (user) {
       setOriginalUserData(user);
       setNewEmail(user.email);
@@ -47,20 +45,6 @@ function UserProfile() {
     }
   }, [user]);
 
-  // Function to handle file input change and update image preview
-  const handleImageChange = (event) => {
-    const file = event.target.files[0];
-    const reader = new FileReader();
-    setImageFile(file);
-    reader.onloadend = () => {
-      setImagePreview(reader.result);
-    };
-
-    if (file) {
-      reader.readAsDataURL(file);
-    }
-  };
-  console.log(user);
   const handleEditProfile = async (e) => {
     e.preventDefault();
 
@@ -70,14 +54,13 @@ function UserProfile() {
       formData.append("phone", newPhoneNumber);
       formData.append("name", newName);
       formData.append("about", about);
-      console.log(formData);
+
       const res = await axios.post(
         `${baseURL}/users/edit/${user._id}`,
         formData,
         { headers: { "Content-Type": "application/json" } }
       );
 
-      console.log("Profile updated successfully:", res.data);
       if (res.data.error === false) {
         Swal.fire({
           icon: "success",
@@ -88,57 +71,7 @@ function UserProfile() {
         setUser(res.data.response);
       }
     } catch (error) {
-      // Handle errors
       console.error("Failed to update profile:", error);
-    }
-  };
-
-  const handleEditProfilePicture = async (e) => {
-    try {
-      // const formData = new FormData();
-      // const newAvatar = Buffer.from(avatar).toString('base64');
-
-      const file = imageFile;
-      const reader = new FileReader();
-
-      reader.onloadend = async () => {
-        // setImagePreview(reader.result);
-        // if (file !== null) {
-        // formData.append("avatar", reader.result);
-        setAvatar(reader.result);
-        setUser({ ...user, avatar: reader.result });
-        await axios.post(`${baseURL}/users/edit-avatar/${user._id}`, {
-          img: reader.result,
-        });
-      };
-      // };
-
-      if (file) reader.readAsDataURL(file);
-
-      const config = {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${cookies.token}`,
-        },
-      };
-
-      // const res = await axios.post(`${baseURL}/users/edit-avatar/${user._id}`, {
-      //   img: avatar,
-      // });
-
-      // console.log("Profile picture updated successfully:", res.data);
-      // if (res.data.error === false) {
-      //   Swal.fire({
-      //     icon: "success",
-      //     title: res.data.message,
-      //     showConfirmButton: false,
-      //     timer: 2000,
-      //   });
-      //   setUser(res.data.response);
-      // }
-    } catch (error) {
-      // Handle errors
-      console.error("Failed to update profile picture:", error);
     }
   };
 
@@ -157,7 +90,6 @@ function UserProfile() {
           showConfirmButton: false,
           timer: 2000,
         });
-        // Remove the deleted post from the userPosts state
         setUserPosts((prevPosts) =>
           prevPosts.filter((post) => post._id !== postID)
         );
@@ -173,18 +105,24 @@ function UserProfile() {
       });
     }
   };
-  if (!user) navigate("/login");
+  // if (!user?.email) navigate("/login");
 
   return (
     <>
+      {editModal && (
+        <PostEditModal
+          setEditModal={setEditModal}
+          setUserPosts={setUserPosts}
+          post_ID={post_ID}
+        />
+      )}
       <LoggedInMenu />
       <div className="container mt-5">
         <div className="container">
           <div className="row">
             <div className="col-md-4">
               <img
-                // style={{objectFit:'contain'}}
-                src={user?.avatar || userImage}
+                src={avatar || userImage}
                 width={200}
                 alt="User"
                 className="img-fluid rounded-circle mb-3 shadow mb-md-0 bg-body-tertiary object-fit-contain border rounded"
@@ -198,22 +136,22 @@ function UserProfile() {
                 {user && user.role}
               </p>
               <div className="d-flex align-items-center mb-3">
-                <BiUser className="me-2" /> {/* React Icon for user */}
+                <BiUser className="me-2" />
                 <span ref={usernameRef} data-username="username">
                   {user && user.username}
                 </span>
               </div>
 
               <p>
-                <MdAlternateEmail /> {/* React Icon for phone */}
+                <MdAlternateEmail />
                 <span>{user && user.email}</span>
               </p>
               <p>
-                <BiPhone /> {/* React Icon for phone */}
+                <BiPhone />
                 <span>{user && user.phone}</span>
               </p>
               <p>
-                <BiInfoCircle /> {/* React Icon for info */}
+                <BiInfoCircle />
                 About:{" "}
                 {user && user.about
                   ? user.about
@@ -229,15 +167,6 @@ function UserProfile() {
                 >
                   Edit Profile
                 </button>
-                <button
-                  className="btn btn-primary"
-                  type="button"
-                  data-bs-toggle="modal"
-                  data-bs-target="#exampleModal3"
-                >
-                  {" "}
-                  Edit Profile Picture
-                </button>
               </div>
             </div>
           </div>
@@ -251,7 +180,7 @@ function UserProfile() {
                 .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
                 .map((post) => (
                   <li
-                    key={post._id}
+                    key={post?._id}
                     className="mb-3 shadow p-3 bg-body-tertiary rounded"
                   >
                     <div className="card-body">
@@ -259,7 +188,7 @@ function UserProfile() {
                         <h6 className="card-title">{post && post.title}</h6>
                         <div className="dropdown">
                           <button
-                            className="btn btn-secondary dropdown-toggle"
+                            className="btn btn-primary "
                             type="button"
                             id="dropdownMenuButton"
                             data-bs-toggle="dropdown"
@@ -286,13 +215,20 @@ function UserProfile() {
                               </button>
                             </li>
                             <li>
-                              <a className="dropdown-item" href="#">
+                              <button
+                                onClick={() => {
+                                  setEditModal(true);
+                                  setPostID(post._id);
+                                }}
+                                className="dropdown-item"
+                              >
                                 Edit
-                              </a>
+                              </button>
                             </li>
                           </ul>
                         </div>
                       </div>
+
                       <p
                         className="card-text mt-2"
                         style={{ fontSize: "0.8rem" }}
@@ -484,55 +420,6 @@ function UserProfile() {
                 data-bs-dismiss="modal"
                 aria-label="Close"
               ></button>
-            </div>
-            <div className="modal-body custom-modal-body">
-              <div className="mb-3">
-                <input
-                  className="form-control custom-input"
-                  type="file"
-                  id="formFile"
-                  onChange={(e) => {
-                    handleImageChange(e);
-                    setAvatar(e.target.files[0]);
-                  }}
-                />
-              </div>
-              {imagePreview ? (
-                <div className="mb-3 d-flex justify-content-center align-items-center">
-                  <img
-                    width={150}
-                    className="img-fluid rounded-circle mb-3 shadow mb-md-0 bg-body-tertiary rounded custom-image-preview"
-                    src={imagePreview}
-                    alt="Preview"
-                  />
-                </div>
-              ) : (
-                <div className="mb-3 d-flex justify-content-center align-items-center">
-                  <img
-                    width={150}
-                    className="img-fluid rounded-circle mb-3 shadow mb-md-0 bg-body-tertiary rounded custom-image-preview"
-                    src={imagePreview || userImage}
-                    alt="User"
-                  />
-                </div>
-              )}
-              <div className="modal-footer custom-modal-footer">
-                <button
-                  type="button"
-                  className="btn btn-danger custom-btn-secondary"
-                  data-bs-dismiss="modal"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-primary custom-btn-primary"
-                  onClick={handleEditProfilePicture}
-                  data-bs-dismiss="modal"
-                >
-                  Save changes
-                </button>
-              </div>
             </div>
           </div>
         </div>

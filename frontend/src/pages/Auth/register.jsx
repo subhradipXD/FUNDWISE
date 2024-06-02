@@ -10,7 +10,6 @@ import RegisterVerify from "./registerVerify";
 function Register() {
   const [name, setName] = useState("");
   const [username, setUsername] = useState("");
-
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [OTP, setOTP] = useState(0);
@@ -19,33 +18,34 @@ function Register() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [role, setRole] = useState("");
 
+  const [usernameError, setUsernameError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+
   const handleUsername = async (e) => {
     e.preventDefault();
     const usernameInput = e.target.value.trim();
     const usernameSpan = document.getElementById("username");
 
-    // Clear the previous message
-    usernameSpan.innerHTML = "";
-    usernameSpan.style.color = ""; // Reset the color
+    setUsernameError("");
+    usernameSpan.style.color = "";
 
-    // Check if the username length is more than 5
     if (usernameInput.length <= 5) {
-      usernameSpan.innerHTML = "Username must be at least 6 characters long";
-      usernameSpan.style.color = "red"; // Set text color to red
-      return; // Exit the function
+      setUsernameError("Username must be at least 6 characters long");
+      usernameSpan.style.color = "red";
+      return;
     }
 
     try {
       const res = await axios.post("http://localhost:2000/users/username", {
         username: usernameInput,
       });
-      console.log(res);
       if (!res.data.error) {
         usernameSpan.innerHTML = res.data.message;
-        usernameSpan.style.color = "green"; // Set text color to green
+        usernameSpan.style.color = "green";
+        setUsernameError("");
       } else {
-        usernameSpan.innerHTML = res.data.message;
-        usernameSpan.style.color = "red"; // Set text color to red
+        setUsernameError(res.data.message);
+        usernameSpan.style.color = "red";
       }
     } catch (err) {
       console.log(err);
@@ -58,27 +58,52 @@ function Register() {
     const passwordRegex =
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
 
-    // Clear the previous message
-    passwordSpan.innerHTML = "";
+    setPasswordError("");
     passwordSpan.style.color = "";
 
-    // Check if the password meets the requirements
     if (!passwordRegex.test(passwordInput)) {
-      passwordSpan.innerHTML =
-        "Password must be at least 6 characters long and contain at least one uppercase, one lowercase, one numeric, and one special character";
+      setPasswordError(
+        "Password must be at least 6 characters long and contain at least one uppercase, one lowercase, one numeric, and one special character"
+      );
       passwordSpan.style.color = "red";
     }
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (usernameError || passwordError) {
+      swal.fire("Error", "Please fix the errors before submitting.", "error");
+      return;
+    }
+
+    if (
+      !name ||
+      !username ||
+      !phone ||
+      !email ||
+      !password ||
+      !confirmPassword ||
+      !role
+    ) {
+      swal.fire("Error", "All fields are required.", "error");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      swal.fire("Error", "Passwords do not match.", "error");
+      return;
+    }
+
     setEnableOTPModal(true);
-    const otp = parseInt(Math.random() * 8);
+    const otp = parseInt(Math.random() * 1000000);
     setOTP(otp);
     await axios.post("http://localhost:5000/send_email_OTP", {
       OTP: otp,
       email,
     });
   };
+
   return (
     <>
       {enableOTPModal && (
@@ -138,8 +163,6 @@ function Register() {
                 <p>We are happy to have you here.</p>
               </div>
 
-              {/* form */}
-
               <form className="" onSubmit={handleSubmit}>
                 <label htmlFor="validationDefault01" className="form-label">
                   Name
@@ -160,7 +183,7 @@ function Register() {
                   type="text"
                   className="form-control"
                   id="validationDefault01"
-                  placeholder="Name..."
+                  placeholder="Username..."
                   value={username}
                   required
                   onChange={(e) => {
@@ -169,7 +192,7 @@ function Register() {
                   }}
                 />
                 <span>
-                  <small id="username"> </small>
+                  <small id="username">{usernameError}</small>
                 </span>
                 <br />
 
@@ -192,7 +215,7 @@ function Register() {
                   type="email"
                   className="form-control"
                   id="validationDefault03"
-                  placeholder="abc@gamil.com"
+                  placeholder="abc@gmail.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -243,7 +266,7 @@ function Register() {
                   required
                 />
                 <span>
-                  <small id="password"></small>
+                  <small id="password">{passwordError}</small>
                 </span>
                 <label htmlFor="validationDefault05" className="form-label">
                   Confirm Password

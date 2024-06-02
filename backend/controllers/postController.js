@@ -37,7 +37,7 @@ const showposts = async (req, res) => {
   }
 };
 
-const updatePost = async (req, res) => {
+const updatePostLikes = async (req, res) => {
   const { postID, category, inc } = req.body;
   try {
     let post;
@@ -49,6 +49,30 @@ const updatePost = async (req, res) => {
       post = await postModel.findByIdAndUpdate(postID, {
         $inc: { interest: inc },
       });
+
+    if (!post) {
+      return res.status(404).json({
+        error: true,
+        message: "Post not found",
+      });
+    }
+    return res.status(200).json({
+      error: false,
+      message: "Post liked",
+    });
+  } catch (error) {}
+};
+
+const updatePost = async (req, res) => {
+  const { post_ID, post_title, post_description } = req.body;
+  console.log(req.body);
+  try {
+    const post = await postModel.findByIdAndUpdate(post_ID, {
+      title: post_title,
+      description: post_description,
+    });
+
+    console.log(post);
 
     if (!post) {
       return res.status(404).json({
@@ -94,5 +118,6 @@ module.exports = {
   feed,
   showposts,
   updatePost,
+  updatePostLikes,
   deletePost,
 };

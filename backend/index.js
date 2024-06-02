@@ -54,10 +54,10 @@ mongoose
   .then(() => console.log("Database Connected"))
   .catch((e) => console.log(e));
 
-app.listen(process.env.PORT, function () {
-  console.log("Server listening on");
-});
-
 app.get("/", (req, res) => {
   res.status(200).send("Api Health Check");
+});
+
+app.listen(process.env.PORT, function () {
+  console.log("Server listening on");
 });

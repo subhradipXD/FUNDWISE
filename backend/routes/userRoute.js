@@ -14,7 +14,10 @@ const path = require("path");
 const storageEngine = multer.diskStorage({
   destination: path.join(__dirname, "../public/uploads/users/"),
   filename: function (req, file, callback) {
-    callback(null, file.fieldname + "-" + Date.now() + path.extname(file.originalname));
+    callback(
+      null,
+      file.fieldname + "-" + Date.now() + path.extname(file.originalname)
+    );
   },
 });
 
@@ -24,7 +27,7 @@ router.post("/login", Login);
 router.post("/register", Register);
 router.post("/username", Username);
 router.get("/currentuser/:hashID", getCurrentUser);
-router.post("/edit-avatar/:userID", upload.single("avatar"), editAvatar);
+router.post("/edit-avatar/", upload.single("avatar"), editAvatar);
 router.post("/edit/:userID", editUser);
 
 module.exports = router;

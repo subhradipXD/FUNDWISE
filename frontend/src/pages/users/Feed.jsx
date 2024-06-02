@@ -64,8 +64,12 @@ function Feed() {
       // Handle error
     }
   };
-  const notifyOwner = async (ownerEmail, title, postID) => {
-    if (localStorage.getItem("interestInPost") == postID) {
+  const notifyOwner = async (ownerEmail, title, postID, userID) => {
+    if (
+      localStorage.getItem(userID) &&
+      JSON.parse(localStorage.getItem(userID)) &&
+      JSON.parse(localStorage.getItem(userID))[`${postID}`]?.interest
+    ) {
       return;
     }
     const response = await axios.post(
@@ -76,9 +80,6 @@ function Feed() {
         interestUser: user,
       }
     );
-
-    // await axios.post(""); //update like;
-    localStorage.setItem("interestInPost", postID);
   };
 
   const getPosts = async () => {
@@ -101,9 +102,15 @@ function Feed() {
     getPosts();
   }, [searchQuery]);
 
-  async function interestORLikeCounterOfPost(postID, category) {
+  async function interestORLikeCounterOfPost(postID, userID, category) {
     if (category == "interest") {
-      if (localStorage.getItem(postID) == "interest") {
+      console.log(localStorage.getItem(userID));
+
+      if (
+        localStorage.getItem(userID) &&
+        JSON.parse(localStorage.getItem(userID)) &&
+        JSON.parse(localStorage.getItem(userID))[`${postID}`]?.interest
+      ) {
         Swal.fire({
           title: "Already marked!",
           icon: "warning",
@@ -120,15 +127,90 @@ function Feed() {
         }
       );
       getPosts();
-      localStorage.setItem(postID, "interest");
+      if (
+        localStorage.getItem(userID) &&
+        JSON.parse(localStorage.getItem(userID)) &&
+        JSON.parse(localStorage.getItem(userID))[`${postID}`]
+      ) {
+        localStorage.setItem(
+          userID,
+          JSON.stringify({
+            ...JSON.parse(localStorage.getItem(userID)),
+            [`${postID}`]: {
+              ...JSON.parse(localStorage.getItem(userID))[`${postID}`],
+              interest: true,
+            },
+          })
+        );
+      } else {
+        if (
+          localStorage.getItem(userID) &&
+          JSON.parse(localStorage.getItem(userID))
+        ) {
+          localStorage.setItem(
+            userID,
+            JSON.stringify({
+              ...JSON.parse(localStorage.getItem(userID)),
+              [`${postID}`]: {
+                ...JSON.parse(localStorage.getItem(userID))[`${postID}`],
+                interest: true,
+              },
+            })
+          );
+        } else {
+          localStorage.setItem(
+            userID,
+            JSON.stringify({ [`${postID}`]: { interest: true } })
+          );
+        }
+      }
+      //interest logic
     } else {
-      if (localStorage.getItem(postID) == "liked") {
+      if (
+        localStorage.getItem(userID) &&
+        JSON.parse(localStorage.getItem(userID)) &&
+        JSON.parse(localStorage.getItem(userID))[`${postID}`]?.likes == true
+      ) {
         await axios.put("http://localhost:2000/post/update_like_interest", {
           postID,
           category: "likes",
           inc: -1,
         });
-        localStorage.removeItem(postID);
+        if (
+          localStorage.getItem(userID) &&
+          JSON.parse(localStorage.getItem(userID)) &&
+          JSON.parse(localStorage.getItem(userID))[`${postID}`]
+        )
+          localStorage.setItem(
+            userID,
+            JSON.stringify({
+              ...JSON.parse(localStorage.getItem(userID)),
+              [`${postID}`]: {
+                ...JSON.parse(localStorage.getItem(userID))[`${postID}`],
+                likes: false,
+              },
+            })
+          );
+        else {
+          if (
+            localStorage.getItem(userID) &&
+            JSON.parse(localStorage.getItem(userID))
+          )
+            localStorage.setItem(
+              userID,
+              JSON.stringify({
+                ...JSON.parse(localStorage.getItem(userID)),
+                [`${postID}`]: { likes: true },
+              })
+            );
+          else {
+            localStorage.setItem(
+              userID,
+              JSON.stringify({ [`${postID}`]: { likes: true } })
+            );
+          }
+        }
+
         getPosts();
         return;
       }
@@ -141,7 +223,40 @@ function Feed() {
         }
       );
       getPosts();
-      localStorage.setItem(postID, "liked");
+      if (
+        localStorage.getItem(userID) &&
+        JSON.parse(localStorage.getItem(userID)) &&
+        JSON.parse(localStorage.getItem(userID))[`${postID}`]
+      )
+        localStorage.setItem(
+          userID,
+          JSON.stringify({
+            ...JSON.parse(localStorage.getItem(userID)),
+            [`${postID}`]: {
+              ...JSON.parse(localStorage.getItem(userID))[`${postID}`],
+              likes: true,
+            },
+          })
+        );
+      else {
+        if (
+          localStorage.getItem(userID) &&
+          JSON.parse(localStorage.getItem(userID))
+        )
+          localStorage.setItem(
+            userID,
+            JSON.stringify({
+              ...JSON.parse(localStorage.getItem(userID)),
+              [`${postID}`]: { likes: true },
+            })
+          );
+        else {
+          localStorage.setItem(
+            userID,
+            JSON.stringify({ [`${postID}`]: { likes: true } })
+          );
+        }
+      }
     }
   }
 
@@ -237,7 +352,11 @@ function Feed() {
                         <div className="d-flex justify-content-around mt-5">
                           <span
                             onClick={() => {
-                              interestORLikeCounterOfPost(post._id, "likes");
+                              interestORLikeCounterOfPost(
+                                post._id,
+                                user._id,
+                                "likes"
+                              );
                             }}
                             className="btn"
                             style={{ color: "red" }}
@@ -249,8 +368,17 @@ function Feed() {
                           </span>
                           <span
                             onClick={() => {
-                              notifyOwner(post.email, post.title, post._id);
-                              interestORLikeCounterOfPost(post._id, "interest");
+                              notifyOwner(
+                                post.email,
+                                post.title,
+                                post._id,
+                                user._id
+                              );
+                              interestORLikeCounterOfPost(
+                                post._id,
+                                user._id,
+                                "interest"
+                              );
                             }}
                             className="btn"
                             style={{ color: "green" }}
